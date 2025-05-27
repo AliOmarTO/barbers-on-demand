@@ -1,13 +1,16 @@
+import { CustomButton } from "@/components/CustomButton";
 import { auth } from "@/firebaseConfig";
+import "@/global.css";
 import { FirebaseError } from "firebase/app";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { verifyInstallation } from "nativewind";
 import { useState } from "react";
-import { ActivityIndicator, Button, KeyboardAvoidingView, StyleSheet, TextInput, View } from "react-native";
-
+import { ActivityIndicator, Image, KeyboardAvoidingView, StyleSheet, TextInput, View } from "react-native";
 export default function Index() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    verifyInstallation();
     const signUp = async () => {
         setLoading(true);
         try {
@@ -15,7 +18,6 @@ export default function Index() {
 
             const user = userCredential.user;
             console.log("User signed up:", user);
-            alert("Check your emails!");
         } catch (e: any) {
             const err = e as FirebaseError;
             alert("Registration failed: " + err.message);
@@ -41,6 +43,11 @@ export default function Index() {
 
     return (
         <View style={styles.container}>
+            <Image
+                source={require("@/assets/images/bodLogo.png")} // Update this path to your actual image location
+                style={styles.logo}
+                resizeMode="contain"
+            />
             <KeyboardAvoidingView behavior="padding">
                 <TextInput
                     style={styles.input}
@@ -50,6 +57,7 @@ export default function Index() {
                     keyboardType="email-address"
                     placeholder="Email"
                 />
+
                 <TextInput
                     style={styles.input}
                     value={password}
@@ -60,10 +68,10 @@ export default function Index() {
                 {loading ? (
                     <ActivityIndicator size={"small"} style={{ margin: 28 }} />
                 ) : (
-                    <>
-                        <Button onPress={signIn} title="Login" />
-                        <Button onPress={signUp} title="Create account" />
-                    </>
+                    <View>
+                        <CustomButton onPress={signIn} title="Login" />
+                        <CustomButton onPress={signUp} title="Register" />
+                    </View>
                 )}
             </KeyboardAvoidingView>
         </View>
@@ -75,6 +83,12 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         flex: 1,
         justifyContent: "center",
+    },
+    logo: {
+        width: 300,
+        height: 300,
+        alignSelf: "center",
+        marginBottom: 24,
     },
     input: {
         marginVertical: 4,
