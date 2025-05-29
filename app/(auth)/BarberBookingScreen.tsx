@@ -22,7 +22,7 @@ const initialBarbers = [
     price: 45,
     rating: 5,
     clients: 120,
-    avatar: 'https://avatar.iran.liara.run/public/1',
+    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
   },
   {
     id: '2',
@@ -30,7 +30,7 @@ const initialBarbers = [
     price: 65,
     rating: 4.5,
     clients: 210,
-    avatar: 'https://avatar.iran.liara.run/public/15',
+    avatar: 'https://randomuser.me/api/portraits/men/44.jpg',
   },
   {
     id: '3',
@@ -38,10 +38,9 @@ const initialBarbers = [
     price: 70,
     rating: 4.8,
     clients: 360,
-    avatar: 'https://avatar.iran.liara.run/public/29',
+    avatar: 'https://randomuser.me/api/portraits/women/65.jpg',
   },
 ];
-
 // Additional barbers to load when "Load more" is pressed
 const additionalBarbers = [
   {
@@ -50,7 +49,7 @@ const additionalBarbers = [
     price: 55,
     rating: 4.7,
     clients: 180,
-    avatar: 'https://avatar.iran.liara.run/public/18',
+    avatar: 'https://randomuser.me/api/portraits/men/14.jpg',
   },
   {
     id: '5',
@@ -58,7 +57,7 @@ const additionalBarbers = [
     price: 60,
     rating: 4.9,
     clients: 290,
-    avatar: 'https://avatar.iran.liara.run/public/1',
+    avatar: 'https://randomuser.me/api/portraits/women/32.jpg',
   },
 ];
 

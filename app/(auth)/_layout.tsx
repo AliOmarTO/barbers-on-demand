@@ -10,6 +10,15 @@ const Layout = () => {
     <Drawer.Navigator
       screenOptions={{
         headerShown: true,
+        headerTintColor: '#cc001e',
+        headerTitleStyle: {
+          color: 'black',
+        },
+        drawerActiveTintColor: '#cc001e',
+        drawerStyle: {
+          backgroundColor: '#f6f6f6',
+          width: 240,
+        },
       }}
     >
       <Drawer.Screen name="Home" component={BarberBookingScreen} />
