@@ -1,9 +1,17 @@
-const { getDefaultConfig } = require("@expo/metro-config");
-const { withNativeWind } = require("nativewind/metro");
+const { getDefaultConfig } = require('@expo/metro-config');
+const { wrapWithReanimatedMetroConfig } = require('react-native-reanimated/metro-config');
+const { withNativeWind } = require('nativewind/metro');
 
-const config = getDefaultConfig(__dirname);
+let config = getDefaultConfig(__dirname);
 
-config.resolver.sourceExts.push("cjs");
+// Required by some libraries that use `.cjs` (like `tailwindcss`)
+config.resolver.sourceExts.push('cjs');
+
+// Fix for expo + nativewind
 config.resolver.unstable_enablePackageExports = false;
 
-module.exports = withNativeWind(config, { input: "./global.css" });
+// Wrap with Reanimated first, then NativeWind
+config = wrapWithReanimatedMetroConfig(config);
+config = withNativeWind(config, { input: './global.css' });
+
+module.exports = config;

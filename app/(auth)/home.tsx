@@ -1,14 +1,6 @@
-import { auth } from "@/firebaseConfig";
-import { Button, Text, View } from "react-native";
+import { Text } from 'react-native';
 
 const Page = () => {
-    const user = auth.currentUser;
-
-    return (
-        <View>
-            <Text>Welcome back back {user?.email}</Text>
-            <Button title="Sign out" onPress={() => auth.signOut()} />
-        </View>
-    );
+  return <Text>yo</Text>;
 };
 export default Page;
