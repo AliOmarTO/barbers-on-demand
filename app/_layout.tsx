@@ -33,7 +33,7 @@ export default function RootLayout() {
       if (initializing) setInitializing(false);
     });
 
-    return unsubscribe; // ✅ Clean up subscription on unmount
+    return unsubscribe; // Clean up subscription on unmount
   }, []);
 
   // redirects user based on auth state
@@ -45,7 +45,7 @@ export default function RootLayout() {
     if (user && !inAuthGroup) {
       router.replace('/(auth)/home');
     } else if (!user && inAuthGroup) {
-      router.replace('/login-screen');
+      router.replace('/');
     }
   }, [user, initializing]);
 

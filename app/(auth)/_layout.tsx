@@ -1,5 +1,6 @@
 import HomeScreen from '@/components/screens/HomeScreen';
-import SettingsScreen from '@/components/screens/SettingsScreen';
+import BarberBookingScreen from './BarberBookingScreen';
+import SettingsScreen from '@/app/(auth)/SettingsScreen';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import React from 'react';
 const Drawer = createDrawerNavigator();
@@ -11,7 +12,7 @@ const Layout = () => {
         headerShown: true,
       }}
     >
-      <Drawer.Screen name="Home" component={HomeScreen} />
+      <Drawer.Screen name="Home" component={BarberBookingScreen} />
       <Drawer.Screen name="Settings" component={SettingsScreen} />
     </Drawer.Navigator>
   );
