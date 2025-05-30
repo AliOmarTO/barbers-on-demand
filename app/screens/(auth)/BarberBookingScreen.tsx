@@ -13,6 +13,7 @@ import {
   TextInput,
 } from 'react-native';
 import { Ionicons, AntDesign } from '@expo/vector-icons';
+import BarberCard from '@/components/BarberCard';
 
 // Mock data with avatar URLs
 const initialBarbers = [
@@ -112,41 +113,6 @@ const StarRating = ({ rating }: { rating: number }) => {
       {[...Array(emptyStars)].map((_, i) => (
         <AntDesign key={`empty-${i}`} name="staro" size={14} color="#D3D3D3" />
       ))}
-    </View>
-  );
-};
-
-// Barber Card Component
-const BarberCard = ({ barber }: { barber: any }) => {
-  return (
-    <View style={styles.card}>
-      <View style={styles.cardContent}>
-        {/* Left side - Barber info */}
-        <View style={styles.barberInfoContainer}>
-          <Image source={{ uri: barber.avatar }} style={styles.avatar} />
-          <View style={styles.barberDetails}>
-            <Text style={styles.barberName}>{barber.name}</Text>
-            <StarRating rating={barber.rating} />
-            <Text style={styles.clientCount}>{barber.clients} clients</Text>
-            <View style={styles.addressContainer}>
-              <Ionicons name="location-outline" size={12} color="#888" />
-              <Text style={styles.addressText}>{barber.address}</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Right side - Price and Book button */}
-        <View style={styles.priceActionContainer}>
-          <Text style={styles.price}>${barber.price}</Text>
-          <TouchableOpacity
-            style={styles.bookButton}
-            onPress={() => console.log(`Booking ${barber.name}`)}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.bookButtonText}>Book Now</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
     </View>
   );
 };

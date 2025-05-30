@@ -1,8 +1,10 @@
 import HomeScreen from '@/components/screens/HomeScreen';
 import BarberBookingScreen from './BarberBookingScreen';
-import SettingsScreen from '@/app/(auth)/SettingsScreen';
+import SettingsScreen from '@/app/screens/(auth)/SettingsScreen';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import React from 'react';
+import MapScreen from './MapScreen';
+
 const Drawer = createDrawerNavigator();
 
 const Layout = () => {
@@ -23,6 +25,7 @@ const Layout = () => {
     >
       <Drawer.Screen name="Home" component={BarberBookingScreen} />
       <Drawer.Screen name="Settings" component={SettingsScreen} />
+      <Drawer.Screen name="Map" component={MapScreen} />
     </Drawer.Navigator>
   );
 };
