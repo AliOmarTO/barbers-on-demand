@@ -73,7 +73,7 @@ const mockBarbers = [
   },
 ];
 
-export default function BarberMapScreen() {
+export default function MapScreen() {
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
   const mapRef = useRef<MapView>(null);

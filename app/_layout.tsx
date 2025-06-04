@@ -41,11 +41,11 @@ export default function RootLayout() {
   useEffect(() => {
     if (initializing) return;
 
-    // Check if the second segment is '(auth)' to determine if in auth group
-    const inAuthGroup = segments[1] === '(auth)';
+    // Check if the first segment is '(auth)' to determine if in auth group(protected routes)
+    const inAuthGroup = segments[0] === '(auth)';
 
     if (user && !inAuthGroup) {
-      router.replace('/screens/(auth)/home');
+      router.replace('/(auth)/(tabs)/home');
     } else if (!user && inAuthGroup) {
       router.replace('/');
     }
