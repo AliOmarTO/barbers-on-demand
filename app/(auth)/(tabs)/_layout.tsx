@@ -1,4 +1,5 @@
-import { Tabs } from 'expo-router';
+'use client';
+import { Tabs, useRootNavigationState } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
 
@@ -10,11 +11,17 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { FontAwesome } from '@expo/vector-icons';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  // Return null or a loading fallback if navigation state isn't ready yet
+  //const { routes } = useRootNavigationState();
 
   return (
     <Tabs
-      screenOptions={{ headerShown: false, tabBarShowLabel: false, tabBarActiveTintColor: 'red' }}
+      screenOptions={{
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarActiveTintColor: 'red',
+        //tabBarStyle: hideTabs ? { display: 'none' } : undefined,
+      }}
     >
       <Tabs.Screen
         name="home"
@@ -24,7 +31,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="mapScreen"
+        name="map"
         options={{
           title: 'Explore',
           tabBarIcon: ({ color }) => <FontAwesome size={28} name="map" color={color} />,
@@ -38,7 +45,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="settingsScreen"
+        name="settings"
         options={{
           title: 'Profile',
           tabBarIcon: ({ color }) => <FontAwesome size={28} name="user" color={color} />,

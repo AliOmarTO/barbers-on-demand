@@ -1,4 +1,4 @@
-'use client';
+// home screen for barber booking app
 
 import { useState } from 'react';
 import {
@@ -98,24 +98,6 @@ const SearchBar = ({
   );
 };
 
-// Star Rating Component
-const StarRating = ({ rating }: { rating: number }) => {
-  const fullStars = Math.floor(rating);
-  const halfStar = rating % 1 >= 0.5;
-  const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-
-  return (
-    <View style={styles.ratingContainer}>
-      {[...Array(fullStars)].map((_, i) => (
-        <AntDesign key={`full-${i}`} name="star" size={14} color="#FFD700" />
-      ))}
-      {halfStar && <AntDesign key="half" name="staro" size={14} color="#FFD700" />}
-      {[...Array(emptyStars)].map((_, i) => (
-        <AntDesign key={`empty-${i}`} name="staro" size={14} color="#D3D3D3" />
-      ))}
-    </View>
-  );
-};
 
 // Main Component
 const BarberBookingScreen = () => {
