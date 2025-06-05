@@ -1,8 +1,10 @@
 // store/barberAtom.ts
-import { Barber } from '@/types';
+import { Barber, Booking } from '@/types';
 import { atom } from 'jotai';
 
 export const selectedBarberAtom = atom<Barber | null>(null);
+
+export const confirmedBookingsAtom = atom<Booking[]>([]);
 
 export const barbersAtom = atom([
   {
@@ -20,7 +22,7 @@ export const barbersAtom = atom([
     id: '2',
     name: 'Jane Kim',
     price: 40,
-    rating: 4.9,
+    rating: 4,
     reviews: 110,
     clients: 98,
     avatar: 'https://randomuser.me/api/portraits/women/44.jpg',

@@ -12,3 +12,14 @@ export interface Barber {
     longitude: number;
   };
 }
+
+export interface Booking {
+  id: string;
+  barber: Barber;
+  serviceType: string; // 'shop' | 'house'
+  paymentMethod: string;
+  notes?: string;
+  date: string;
+  time: string;
+  location: string;
+}

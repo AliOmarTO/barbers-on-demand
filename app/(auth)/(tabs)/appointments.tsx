@@ -1,110 +1,189 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  SafeAreaView,
+  StatusBar,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Home,
+  Store,
+  CreditCard,
+  FileText,
+  Phone,
+} from 'lucide-react-native';
+import { useAtom } from 'jotai';
+import { confirmedBookingsAtom } from '@/store/barberAtom'; // Adjust import path as needed
+import { Booking } from '@/types'; // Adjust import path as needed
+import { useRouter } from 'expo-router';
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+export default function AppointmentsScreen() {
+  const [bookings, setBookings] = useAtom(confirmedBookingsAtom);
+  const router = useRouter();
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
 
-export default function TabTwoScreen() {
+  const handleCancelBooking = (idToRemove: string) => {
+    // Handle booking cancellation logic here
+    console.log('Booking cancelled');
+    // You might want to show a confirmation dialog or remove the booking from the list
+    setBookings((prev) => prev.filter((booking) => booking.id !== idToRemove));
+  };
+
+  const getServiceTypeIcon = (serviceType: string) => {
+    return serviceType === 'shop' ? (
+      <Store size={16} color="#EF4444" />
+    ) : (
+      <Home size={16} color="#3B82F6" />
+    );
+  };
+
+  const getServiceTypeText = (serviceType: string) => {
+    return serviceType === 'shop' ? 'In Shop' : 'House Call';
+  };
+
+  const getServiceTypeColor = (serviceType: string) => {
+    return serviceType === 'shop' ? 'bg-red-50 text-red-700' : 'bg-blue-50 text-blue-700';
+  };
+
+  const renderBookingCard = (booking: Booking) => (
+    <View
+      key={booking.id}
+      className="bg-white rounded-xl p-4 mb-4 border border-gray-100 shadow-sm"
+    >
+      {/* Header with Barber Info */}
+      <View className="flex-row items-center mb-4">
+        <Image source={{ uri: booking.barber.avatar }} className="w-12 h-12 rounded-full mr-3" />
+        <View className="flex-1">
+          <Text className="text-lg font-semibold">{booking.barber.name}</Text>
+          <View className="flex-row items-center">
+            <Text className="text-sm text-gray-600">{booking.barber.rating}</Text>
+            <Text className="text-yellow-400 ml-1">★</Text>
+            <Text className="text-sm text-gray-600 ml-1">({booking.barber.reviews} reviews)</Text>
+          </View>
+        </View>
+        <View
+          className={`px-3 py-1 rounded-full flex-row items-center ${getServiceTypeColor(
+            booking.serviceType
+          )}`}
+        >
+          {getServiceTypeIcon(booking.serviceType)}
+          <Text className="text-xs font-medium ml-1">
+            {getServiceTypeText(booking.serviceType)}
+          </Text>
+        </View>
+      </View>
+
+      {/* Date and Time */}
+      <View className="flex-row items-center mb-3">
+        <Calendar size={16} color="#666" />
+        <Text className="text-gray-700 ml-2 flex-1">{booking.date}</Text>
+        <Clock size={16} color="#666" />
+        <Text className="text-gray-700 ml-2">{booking.time}</Text>
+      </View>
+
+      {/* Location */}
+      <View className="flex-row items-center mb-3">
+        <MapPin size={16} color="#666" />
+        <Text className="text-gray-700 ml-2 flex-1" numberOfLines={1}>
+          {booking.location}
+        </Text>
+      </View>
+
+      {/* Notes (if available) */}
+      {booking.notes && (
+        <View className="flex-row items-start mb-3">
+          <FileText size={16} color="#666" className="mt-0.5" />
+          <Text className="text-gray-700 ml-2 flex-1 text-sm leading-5">{booking.notes}</Text>
+        </View>
+      )}
+
+      {/* Action Buttons */}
+      <View className="flex-row space-x-3 mt-4 pt-4 border-t border-gray-100">
+        <TouchableOpacity
+          onPress={() => handleCancelBooking(booking.id)}
+          className="flex-1 bg-gray-100 py-3 rounded-lg items-center"
+        >
+          <Text className="text-gray-700 font-medium">Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity className="flex-1 bg-red-600 py-3 rounded-lg items-center flex-row justify-center">
+          <Phone size={16} color="white" />
+          <Text className="text-white font-medium ml-2">Call Barber</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  const upcomingBookings = bookings;
+  const pastBookings = bookings.filter((booking) => new Date(booking.date) < new Date());
+  console.log('Upcoming Bookings:', upcomingBookings);
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <SafeAreaView className="flex-1 bg-gray-50">
+      <StatusBar barStyle="dark-content" />
+
+      {/* Header */}
+      <View className="px-4 py-4 bg-white border-b border-gray-100">
+        <Text className="text-2xl font-bold">My Appointments</Text>
+        <Text className="text-gray-600 mt-1">
+          {upcomingBookings.length} upcoming • {pastBookings.length} completed
+        </Text>
+      </View>
+
+      <ScrollView className="flex-1 px-4 py-4">
+        {bookings.length === 0 ? (
+          /* Empty State */
+          <View className="flex-1 items-center justify-center py-20">
+            <View className="w-20 h-20 bg-gray-200 rounded-full items-center justify-center mb-4">
+              <Calendar size={32} color="#9CA3AF" />
+            </View>
+            <Text className="text-xl font-semibold text-gray-800 mb-2">No appointments yet</Text>
+            <Text className="text-gray-600 text-center leading-6">
+              Book your first appointment to see it here
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                router.push('/map'); // Adjust the route to your booking screen
+              }}
+              className="bg-red-600 px-6 py-3 rounded-lg mt-6"
+            >
+              <Text className="text-white font-semibold">Book Now</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <>
+            {/* Upcoming Appointments */}
+            {upcomingBookings.length > 0 && (
+              <View className="mb-6">
+                <Text className="text-lg font-semibold mb-4 text-gray-800">
+                  Upcoming Appointments
+                </Text>
+                {upcomingBookings.map(renderBookingCard)}
+              </View>
+            )}
+
+            {/* Past Appointments */}
+            {pastBookings.length > 0 && (
+              <View className="mb-6">
+                <Text className="text-lg font-semibold mb-4 text-gray-800">Past Appointments</Text>
+                {pastBookings.map(renderBookingCard)}
+              </View>
+            )}
+          </>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-});

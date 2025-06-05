@@ -49,7 +49,7 @@ export default function ServiceLocationScreen() {
             Where would you like your service?
           </Text>
           <Text className="text-gray-600 text-center text-base leading-6">
-            Choose between visiting our shop or having our barber come to you
+            Choose between visiting the shop or having the barber come to you
           </Text>
         </View>
 
@@ -78,10 +78,6 @@ export default function ServiceLocationScreen() {
                 <View className="flex-row items-center mb-2">
                   <MapPin size={16} color="#666" />
                   <Text className="text-gray-600 ml-2">1687 Saint Clair Avenue West</Text>
-                </View>
-                <View className="flex-row items-center">
-                  <Clock size={16} color="#666" />
-                  <Text className="text-gray-600 ml-2">Standard pricing applies</Text>
                 </View>
               </View>
             </View>
@@ -112,16 +108,11 @@ export default function ServiceLocationScreen() {
               <View className="flex-1">
                 <Text className="text-xl font-semibold mb-2">House Call</Text>
                 <Text className="text-gray-600 mb-3 leading-6">
-                  Have the professional barber come to your location. Perfect for convenience and
-                  comfort.
+                  Have the professional barber come to your location.
                 </Text>
                 <View className="flex-row items-center mb-2">
                   <MapPin size={16} color="#666" />
                   <Text className="text-gray-600 ml-2">Service at your address</Text>
-                </View>
-                <View className="flex-row items-center">
-                  <Clock size={16} color="#666" />
-                  <Text className="text-gray-600 ml-2">Additional fee may apply</Text>
                 </View>
               </View>
             </View>

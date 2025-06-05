@@ -59,13 +59,6 @@ const BarberBookingScreen = () => {
     barber.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleLoadMore = () => {
-    if (!showingAll) {
-      setBarbers([...barbers, ...additionalBarbers]);
-      setShowingAll(true);
-    }
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
@@ -77,16 +70,6 @@ const BarberBookingScreen = () => {
         showsVerticalScrollIndicator={false}
         bounces={true}
       />
-
-      {!showingAll && (
-        <TouchableOpacity
-          style={styles.loadMoreButton}
-          onPress={handleLoadMore}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.loadMoreText}>Load more</Text>
-        </TouchableOpacity>
-      )}
     </SafeAreaView>
   );
 };

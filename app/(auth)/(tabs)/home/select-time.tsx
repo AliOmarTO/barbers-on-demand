@@ -9,8 +9,8 @@ import {
   StatusBar,
   Image,
 } from 'react-native';
-import { ArrowLeft, X, Calendar, ChevronDown } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
+import { ArrowLeft, Home, Store, X } from 'lucide-react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useAtom } from 'jotai';
 import { selectedBarberAtom } from '@/store/barberAtom';
 
@@ -24,6 +24,7 @@ export default function TimeSelector() {
   const [selectedTime, setSelectedTime] = useState('');
   const router = useRouter();
   const [barber] = useAtom(selectedBarberAtom);
+  const { location } = useLocalSearchParams();
 
   if (!barber) return <Text>No barber selected.</Text>;
 
@@ -58,6 +59,11 @@ export default function TimeSelector() {
     { time: '6:30 PM', isBooked: false },
   ];
 
+  // function to exit the booking flow
+  const handleClose = () => {
+    router.dismissAll();
+  };
+
   // function to get to the payment screen
   const handleNextButton = () => {
     router.push({
@@ -65,6 +71,7 @@ export default function TimeSelector() {
       params: {
         time: selectedTime,
         date: `July ${selectedDate}`, // or full date string
+        location // 'shop or 'home'
       },
     });
   };
@@ -131,6 +138,9 @@ export default function TimeSelector() {
             }}
           />
         </TouchableOpacity>
+        <TouchableOpacity onPress={handleClose} className="p-2">
+          <X size={24} color="#000" />
+        </TouchableOpacity>
       </View>
 
       {/* Content */}
@@ -138,6 +148,29 @@ export default function TimeSelector() {
         <ScrollView className="px-4 flex-1">
           {/* Title */}
           <Text className="text-4xl font-bold text-black mb-6">Select time</Text>
+
+          {/* Service Type Display */}
+          <View className="mb-6 p-4 bg-gray-50 rounded-xl">
+            <View className="flex-row items-center">
+              <View
+                className={`p-2 rounded-full mr-3 ${
+                  location === 'shop' ? 'bg-red-100' : 'bg-red-100'
+                }`}
+              >
+                {location === 'shop' ? (
+                  <Store size={20} color="#EF4444" />
+                ) : (
+                  <Home size={20} color="#EF4444" />
+                )}
+              </View>
+              <View className="flex-1">
+                <Text className="text-sm text-gray-500 mb-1">Service Type</Text>
+                <Text className="text-lg font-semibold">
+                  {location === 'shop' ? 'In Shop Service' : 'House Call Service'}
+                </Text>
+              </View>
+            </View>
+          </View>
 
           {/* User Selector and Calendar */}
           <View className="flex-row items-center justify-between mb-6">
