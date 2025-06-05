@@ -14,59 +14,8 @@ import {
 } from 'react-native';
 import { Ionicons, AntDesign } from '@expo/vector-icons';
 import BarberCard from '@/components/BarberCard';
-
-// Mock data with avatar URLs
-const initialBarbers = [
-  {
-    id: '1',
-    name: 'Tom Marelli',
-    price: 45,
-    rating: 5,
-    clients: 120,
-    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-    address: '123 Main St, Toronto',
-  },
-  {
-    id: '2',
-    name: 'Dean Scott',
-    price: 65,
-    rating: 4.5,
-    clients: 210,
-    avatar: 'https://randomuser.me/api/portraits/men/44.jpg',
-    address: '456 Oak Ave, Toronto',
-  },
-  {
-    id: '3',
-    name: 'Melisa Bart',
-    price: 70,
-    rating: 4.8,
-    clients: 360,
-    avatar: 'https://randomuser.me/api/portraits/women/65.jpg',
-    address: '789 Pine Rd, Toronto',
-  },
-];
-
-// Additional barbers to load when "Load more" is pressed
-const additionalBarbers = [
-  {
-    id: '4',
-    name: 'James Wilson',
-    price: 55,
-    rating: 4.7,
-    clients: 180,
-    avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
-    address: '321 Elm St, Toronto',
-  },
-  {
-    id: '5',
-    name: 'Sarah Johnson',
-    price: 60,
-    rating: 4.9,
-    clients: 290,
-    avatar: 'https://randomuser.me/api/portraits/women/28.jpg',
-    address: '654 Maple Dr, Toronto',
-  },
-];
+import { useAtom } from 'jotai';
+import { barbersAtom } from '@/store/barberAtom';
 
 // Search Bar Component
 const SearchBar = ({
@@ -98,10 +47,11 @@ const SearchBar = ({
   );
 };
 
-
 // Main Component
 const BarberBookingScreen = () => {
-  const [barbers, setBarbers] = useState(initialBarbers);
+  // jotai barbers
+  const [barbersList] = useAtom(barbersAtom);
+  const [barbers, setBarbers] = useState(barbersList);
   const [showingAll, setShowingAll] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 

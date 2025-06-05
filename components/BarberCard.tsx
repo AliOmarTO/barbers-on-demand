@@ -32,10 +32,10 @@ const BarberCard = ({ barber }: { barber: Barber }) => {
   const router = useRouter();
   const setSelectedBarber = useSetAtom(selectedBarberAtom);
 
-  const handleBookNow = () => { 
+  const handleBookNow = () => {
     setSelectedBarber(barber);
-    router.push('/(auth)/(tabs)/home/select-time');
-  }
+    router.push('/(auth)/(tabs)/home/location-choice');
+  };
   return (
     <View style={styles.card}>
       <View style={styles.cardContent}>
@@ -54,11 +54,7 @@ const BarberCard = ({ barber }: { barber: Barber }) => {
 
         <View style={styles.priceActionContainer}>
           <Text style={styles.price}>${barber.price}</Text>
-          <TouchableOpacity
-            style={styles.bookButton}
-            onPress={handleBookNow}
-            activeOpacity={0.8}
-          >
+          <TouchableOpacity style={styles.bookButton} onPress={handleBookNow} activeOpacity={0.8}>
             <Text style={styles.bookButtonText}>Book Now</Text>
           </TouchableOpacity>
         </View>
