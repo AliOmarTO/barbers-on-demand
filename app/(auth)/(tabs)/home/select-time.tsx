@@ -7,9 +7,12 @@ import {
   ScrollView,
   SafeAreaView,
   StatusBar,
+  Image,
 } from 'react-native';
 import { ArrowLeft, X, Calendar, ChevronDown } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { useAtom } from 'jotai';
+import { selectedBarberAtom } from '@/store/barberAtom';
 
 interface TimeSlot {
   time: string;
@@ -17,9 +20,12 @@ interface TimeSlot {
 }
 
 export default function TimeSelector() {
-  const [selectedDate, setSelectedDate] = useState(24);
-  const [selectedTime, setSelectedTime] = useState('12:15 p.m.');
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState('');
   const router = useRouter();
+  const [barber] = useAtom(selectedBarberAtom);
+
+  if (!barber) return <Text>No barber selected.</Text>;
 
   const dates = [
     { date: 24, day: 'Thursday' },
@@ -51,6 +57,17 @@ export default function TimeSelector() {
     { time: '6:00 PM', isBooked: false },
     { time: '6:30 PM', isBooked: false },
   ];
+
+  // function to get to the payment screen
+  const handleNextButton = () => {
+    router.push({
+      pathname: '/(auth)/(tabs)/home/payment',
+      params: {
+        time: selectedTime,
+        date: `July ${selectedDate}`, // or full date string
+      },
+    });
+  };
 
   const getSelectedDateName = () => {
     const selectedDateObj = dates.find((d) => d.date === selectedDate);
@@ -117,74 +134,87 @@ export default function TimeSelector() {
       </View>
 
       {/* Content */}
-      <ScrollView className="px-4 flex-1">
-        {/* Title */}
-        <Text className="text-4xl font-bold text-black mb-6">Select time</Text>
+      <View className="flex-1">
+        <ScrollView className="px-4 flex-1">
+          {/* Title */}
+          <Text className="text-4xl font-bold text-black mb-6">Select time</Text>
 
-        {/* User Selector and Calendar */}
-        <View className="flex-row items-center justify-between mb-6">
-          <TouchableOpacity className="flex-row items-center gap-3 bg-gray-100 rounded-full px-4 py-3">
-            <View className="w-8 h-8 bg-purple-100 rounded-full items-center justify-center">
-              <Text className="text-purple-600 font-semibold">J</Text>
-            </View>
-            <Text className="font-medium">Judy</Text>
-            <ChevronDown size={16} color="#6B7280" />
-          </TouchableOpacity>
-          <TouchableOpacity className="w-12 h-12 border border-gray-300 rounded-full items-center justify-center">
-            <Calendar size={20} color="#000" />
-          </TouchableOpacity>
-        </View>
+          {/* User Selector and Calendar */}
+          <View className="flex-row items-center justify-between mb-6">
+            <TouchableOpacity className="flex-row items-center gap-3 bg-gray-100 rounded-full px-4 py-3">
+              <View className="w-8 h-8 bg-purple-100 rounded-full items-center justify-center">
+                <Image
+                  className="w-10 h-10 rounded-full mr-4 bg-[#F0F0F0]"
+                  source={{ uri: barber.avatar }}
+                />
+              </View>
+              <Text className="font-medium">{barber.name}</Text>
+            </TouchableOpacity>
+          </View>
 
-        {/* Month/Year */}
-        <Text className="text-2xl font-bold text-black mb-6">July 2025</Text>
+          {/* Month/Year */}
+          <Text className="text-2xl font-bold text-black mb-6">July 2025</Text>
 
-        {/* Date Picker */}
-        <View className="mb-6">
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingRight: 16 }}
-          >
-            {dates.map((item, index) => (
-              <View key={item.date} className="items-center mr-4">
-                <TouchableOpacity
-                  onPress={() => setSelectedDate(item.date)}
-                  className={`w-16 h-16 rounded-full items-center justify-center ${
-                    selectedDate === item.date ? 'bg-red-600' : 'bg-gray-100'
-                  }`}
-                >
-                  <Text
-                    className={`text-2xl font-bold ${
-                      selectedDate === item.date ? 'text-white' : 'text-gray-400'
+          {/* Date Picker */}
+          <View className="mb-6">
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingRight: 16 }}
+            >
+              {dates.map((item, index) => (
+                <View key={item.date} className="items-center mr-4">
+                  <TouchableOpacity
+                    onPress={() => setSelectedDate(item.date)}
+                    className={`w-16 h-16 rounded-full items-center justify-center ${
+                      selectedDate === item.date ? 'bg-red-600' : 'bg-gray-100'
                     }`}
                   >
-                    {item.date}
+                    <Text
+                      className={`text-2xl font-bold ${
+                        selectedDate === item.date ? 'text-white' : 'text-gray-400'
+                      }`}
+                    >
+                      {item.date}
+                    </Text>
+                  </TouchableOpacity>
+                  <Text
+                    className={`text-sm mt-2 ${
+                      selectedDate === item.date ? 'text-black font-medium' : 'text-gray-400'
+                    }`}
+                  >
+                    {item.day}
                   </Text>
-                </TouchableOpacity>
-                <Text
-                  className={`text-sm mt-2 ${
-                    selectedDate === item.date ? 'text-black font-medium' : 'text-gray-400'
-                  }`}
-                >
-                  {item.day}
-                </Text>
-              </View>
-            ))}
-          </ScrollView>
-        </View>
+                </View>
+              ))}
+            </ScrollView>
+          </View>
 
-        {/* Available Times Header */}
-        <Text className="text-lg font-medium text-gray-800 mb-4">
-          Available Times - {getSelectedDateName()}, July {selectedDate}
-        </Text>
+          {/* Available Times Header */}
+          <Text className="text-lg font-medium text-gray-800 mb-4">
+            Available Times - {getSelectedDateName()}, July {selectedDate}
+          </Text>
 
-        {/* Time Slots Grid */}
-        <View className="mb-6">
-          {Array.from({ length: Math.ceil(timeSlots.length / 3) }).map((_, index) =>
-            renderTimeSlotRow(index * 3)
-          )}
-        </View>
-      </ScrollView>
+          {/* Time Slots Grid */}
+          <View className="mb-6">
+            {Array.from({ length: Math.ceil(timeSlots.length / 3) }).map((_, index) =>
+              renderTimeSlotRow(index * 3)
+            )}
+          </View>
+        </ScrollView>
+
+        {/* Fixed Bottom Proceed Button */}
+        {selectedDate && selectedTime && (
+          <View className="absolute bottom-4 left-4 right-4">
+            <TouchableOpacity
+              onPress={handleNextButton}
+              className="bg-red-600 py-4 rounded-xl items-center"
+            >
+              <Text className="text-white text-lg font-semibold">Next</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
     </SafeAreaView>
   );
 }

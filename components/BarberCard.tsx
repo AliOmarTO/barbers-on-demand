@@ -5,6 +5,9 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons, AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useSetAtom } from 'jotai';
+import { selectedBarberAtom } from '@/store/barberAtom';
+import { Barber } from '@/types';
 
 // StarRating component inside this file for convenience (or you can export/import separately)
 const StarRating = ({ rating }: { rating: number }) => {
@@ -25,8 +28,14 @@ const StarRating = ({ rating }: { rating: number }) => {
   );
 };
 
-const BarberCard = ({ barber }: { barber: any }) => {
+const BarberCard = ({ barber }: { barber: Barber }) => {
   const router = useRouter();
+  const setSelectedBarber = useSetAtom(selectedBarberAtom);
+
+  const handleBookNow = () => { 
+    setSelectedBarber(barber);
+    router.push('/(auth)/(tabs)/home/select-time');
+  }
   return (
     <View style={styles.card}>
       <View style={styles.cardContent}>
@@ -47,7 +56,7 @@ const BarberCard = ({ barber }: { barber: any }) => {
           <Text style={styles.price}>${barber.price}</Text>
           <TouchableOpacity
             style={styles.bookButton}
-            onPress={() => router.push('/(auth)/(tabs)/home/select-time')}
+            onPress={handleBookNow}
             activeOpacity={0.8}
           >
             <Text style={styles.bookButtonText}>Book Now</Text>
