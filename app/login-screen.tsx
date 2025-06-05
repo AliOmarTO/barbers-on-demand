@@ -44,9 +44,7 @@ export default function LoginScreen() {
     setLoading(true);
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      console.log('User signed in:', user);
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (e: any) {
       const err = e as FirebaseError;
       alert('Login failed: ' + err.message);

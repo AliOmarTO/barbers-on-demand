@@ -7,6 +7,7 @@ import {
   StatusBar,
   Image,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {
   Calendar,
@@ -38,7 +39,10 @@ export default function AppointmentsScreen() {
 
   const handleCancelBooking = (idToRemove: string) => {
     // Handle booking cancellation logic here
-    console.log('Booking cancelled');
+
+    // alert that the booking has been cancelled
+    Alert.alert('Booking Cancelled', 'Your booking has been successfully cancelled.');
+
     // You might want to show a confirmation dialog or remove the booking from the list
     setBookings((prev) => prev.filter((booking) => booking.id !== idToRemove));
   };
@@ -129,13 +133,13 @@ export default function AppointmentsScreen() {
 
   const upcomingBookings = bookings;
   const pastBookings = bookings.filter((booking) => new Date(booking.date) < new Date());
-  console.log('Upcoming Bookings:', upcomingBookings);
+
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
-      <View className="px-4 py-4 bg-white border-b border-gray-100">
+      <View className="px-4 py-4  border-b border-gray-100">
         <Text className="text-2xl font-bold">My Appointments</Text>
         <Text className="text-gray-600 mt-1">
           {upcomingBookings.length} upcoming • {pastBookings.length} completed

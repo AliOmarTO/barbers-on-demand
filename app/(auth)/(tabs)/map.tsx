@@ -1,8 +1,8 @@
 import React, { useRef, useMemo } from 'react';
-import { View, StyleSheet, Dimensions, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
-import BottomSheet, { BottomSheetFlatList, BottomSheetView } from '@gorhom/bottom-sheet';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
+
 import BarberCard from '@/components/BarberCard';
 import { useAtom } from 'jotai';
 import { barbersAtom } from '@/store/barberAtom';
