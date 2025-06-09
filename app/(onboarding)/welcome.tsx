@@ -5,17 +5,20 @@ import { View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ArrowLeft } from 'lucide-react-native';
+import { useAtom } from 'jotai';
+import { userAtom } from '@/store/userAtom';
 
 export default function Welcome() {
   const [selectedType, setSelectedType] = useState<'barber' | 'client' | null>(null);
   const router = useRouter();
+  const [jotaiUser, setJotaiUser] = useAtom(userAtom); // Assuming you have a user atom
 
   const handleContinue = () => {
     if (selectedType) {
-      router.push({
-        pathname: '/(onboarding)/profile',
-        params: { userType: selectedType },
-      });
+      // Update the user atom with the selected type either barber or client
+      setJotaiUser((prev) => ({ ...prev!, type: selectedType }));
+
+      router.push('/(onboarding)/profile');
     }
   };
 

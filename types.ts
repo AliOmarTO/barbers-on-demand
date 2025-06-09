@@ -11,7 +11,8 @@ export interface Booking {
 
 export interface JotaiUser {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   completedOnboarding?: boolean;
   type?: 'barber' | 'client';
   address?: string;
