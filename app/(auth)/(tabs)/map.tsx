@@ -1,82 +1,21 @@
 import React, { useRef, useMemo } from 'react';
-import { View, StyleSheet, Dimensions, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
-import BottomSheet, { BottomSheetFlatList, BottomSheetView } from '@gorhom/bottom-sheet';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import BarberCard from '@/components/BarberCard';
+import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 
+import BarberCard from '@/components/BarberCard';
+import { useAtom } from 'jotai';
+import { barbersAtom } from '@/store/barberAtom';
 const mockCurrentLocation = {
   latitude: 43.6276, // Etobicoke approx latitude
   longitude: -79.5372, // Etobicoke approx longitude
 };
 
-const mockBarbers = [
-  {
-    id: 1,
-    name: 'Tom Marelli',
-    price: '45',
-    rating: 4.8,
-    reviews: 124,
-    address: '123 King St W, Toronto',
-    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-    coordinate: { latitude: 43.6532, longitude: -79.3832 },
-  },
-  {
-    id: 2,
-    name: 'Dean Scott',
-    price: '65',
-    rating: 4.6,
-    reviews: 98,
-    address: '456 Queen St W, Toronto',
-    avatar: 'https://randomuser.me/api/portraits/men/44.jpg',
-    coordinate: { latitude: 43.6617, longitude: -79.395 },
-  },
-  {
-    id: 3,
-    name: 'Melisa Bart',
-    price: '70',
-    rating: 4.9,
-    reviews: 156,
-    address: '789 Yonge St, Toronto',
-    avatar: 'https://randomuser.me/api/portraits/women/65.jpg',
-    coordinate: { latitude: 43.6487, longitude: -79.3817 },
-  },
-  {
-    id: 4,
-    name: 'Jordan Singh',
-    price: '60',
-    rating: 4.7,
-    reviews: 87,
-    address: '321 Bloor St W, Toronto',
-    avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
-    coordinate: { latitude: 43.6205, longitude: -79.5132 },
-  },
-  {
-    id: 5,
-    name: 'Alex Vaughan',
-    price: '55',
-    rating: 4.5,
-    reviews: 112,
-    address: '654 Dundas St E, Toronto',
-    avatar: 'https://randomuser.me/api/portraits/women/28.jpg',
-    coordinate: { latitude: 43.8372, longitude: -79.5083 },
-  },
-  {
-    id: 6,
-    name: 'Alex Vaughan',
-    price: '55',
-    rating: 4.5,
-    reviews: 112,
-    address: '654 Dundas St E, Toronto',
-    avatar: 'https://randomuser.me/api/portraits/women/28.jpg',
-    coordinate: { latitude: 43.8372, longitude: -79.5083 },
-  },
-];
-
 export default function MapScreen() {
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
   const mapRef = useRef<MapView>(null);
+  const [mockBarbers] = useAtom(barbersAtom);
 
   const snapToMarker = (coordinate: { latitude: number; longitude: number }) => {
     if (mapRef.current) {
