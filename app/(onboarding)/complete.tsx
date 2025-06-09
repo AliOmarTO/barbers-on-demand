@@ -150,6 +150,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     flex: 1,
   },
+  
   nextSteps: {
     width: '100%',
     marginBottom: 32,

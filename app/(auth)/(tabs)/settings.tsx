@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '@/firebaseConfig';
+import { useAtom } from 'jotai';
+import { userAtom } from '@/store/userAtom';
 
 // Mock user data
 const userData = {
@@ -20,13 +22,25 @@ const userData = {
 
 const SettingsScreen = () => {
   const user = auth.currentUser;
+
+  const [jotaiUser, setJotaiUser] = useAtom(userAtom);
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Profile Section */}
         <View style={styles.profileSection}>
-          <Image source={{ uri: userData.avatar }} style={styles.profileImage} />
-          <Text style={styles.profileName}>{userData.name}</Text>
+          {jotaiUser?.profileImage ? (
+            <Image
+              source={{ uri: jotaiUser?.profileImage as string }}
+              style={styles.profileImage}
+            />
+          ) : (
+            <View style={styles.placeholderImage}>
+              <Ionicons name="person" size={64} color="#94a3b8" />
+            </View>
+          )}
+          <Text style={styles.profileName}>{jotaiUser?.firstName}</Text>
         </View>
 
         {/* User Info Section */}
@@ -40,7 +54,9 @@ const SettingsScreen = () => {
               </View>
               <View style={styles.infoContent}>
                 <Text style={styles.infoLabel}>Full Name</Text>
-                <Text style={styles.infoValue}>{userData.name}</Text>
+                <Text style={styles.infoValue}>
+                  {jotaiUser!.firstName + ' ' + jotaiUser!.lastName}
+                </Text>
               </View>
               <TouchableOpacity style={styles.editButton}>
                 <Ionicons name="pencil-outline" size={20} color="#555" />
@@ -70,7 +86,7 @@ const SettingsScreen = () => {
               </View>
               <View style={styles.infoContent}>
                 <Text style={styles.infoLabel}>Phone</Text>
-                <Text style={styles.infoValue}>{userData.phone}</Text>
+                <Text style={styles.infoValue}>{jotaiUser?.phone}</Text>
               </View>
               <TouchableOpacity style={styles.editButton}>
                 <Ionicons name="pencil-outline" size={20} color="#555" />
