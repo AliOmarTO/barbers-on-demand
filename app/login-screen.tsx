@@ -20,7 +20,7 @@ import {
 
 import { Ionicons } from '@expo/vector-icons';
 import { useAtom } from 'jotai';
-import { userAtom } from '@/store/userAtom';
+import { registeredUsersAtom, userAtom } from '@/store/userAtom';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -30,6 +30,7 @@ export default function LoginScreen() {
   const [isSignUp, setIsSignUp] = useState(false);
 
   const [user, setUser] = useAtom(userAtom);
+  const [registeredUsers, setRegisteredUsers] = useAtom(registeredUsersAtom);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -49,7 +50,16 @@ export default function LoginScreen() {
     setLoading(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const firebaseUser = await signInWithEmailAndPassword(auth, email, password);
+      // retrive user object from array in jotai
+      const userCredential = firebaseUser.user;
+
+      const loggedInUser = registeredUsers.find((u) => u.id === userCredential.uid);
+      if (loggedInUser) {
+        setUser(loggedInUser);
+      } else {
+        Alert.alert('Error', 'User not found in registered users.');
+      }
     } catch (e: any) {
       const err = e as FirebaseError;
       alert('Login failed: ' + err.message);
@@ -84,7 +94,8 @@ export default function LoginScreen() {
 
       const newUser: JotaiUser = {
         id: user.uid,
-        name: 'New User',
+        firstName: '', // set default empty values
+        lastName: '',
         email: user.email || email,
         // set user type on onbaording screen
         completedOnboarding: false,
@@ -119,7 +130,7 @@ export default function LoginScreen() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
           <Image
-            source={require('@/assets/images/bodLogo.png')} // Adjust path as needed
+            source={require('@/assets/images/bodLogo.png')}
             style={styles.logo}
             resizeMode="contain"
           />

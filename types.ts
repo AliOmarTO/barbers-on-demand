@@ -17,8 +17,8 @@ export interface JotaiUser {
   type?: 'barber' | 'client';
   address?: string;
   email: string;
-  phone?: string;
-  avatar?: string;
+  phone?: number;
+  profileImage?: string;
   bookings?: Booking[];
 }
 

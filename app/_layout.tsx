@@ -11,7 +11,7 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useAtom } from 'jotai';
-import { userAtom } from '@/store/userAtom';
+import { registeredUsersAtom, userAtom } from '@/store/userAtom';
 
 export default function RootLayout() {
   const [initializing, setInitializing] = useState(true);
@@ -24,7 +24,7 @@ export default function RootLayout() {
   });
 
   const [jotaiUser, setJotaiUser] = useAtom(userAtom);
-
+  const [registeredUsers, setRegisteredUsers] = useAtom(registeredUsersAtom);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {

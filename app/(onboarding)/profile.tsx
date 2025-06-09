@@ -22,14 +22,14 @@ import { useAtom } from 'jotai';
 import { userAtom } from '@/store/userAtom';
 
 export default function Profile() {
-  const [displayName, setDisplayName] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [address, setAddress] = useState('');
+  const [firstName, setFirstName] = useState<string>('');
+  const [lastName, setLastName] = useState<string>('');
+  const [address, setAddress] = useState<string>('');
+  const [phone, setPhone] = useState<number>(0);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const router = useRouter();
-
-  const [jotaiUser, setJotaiUser] = useAtom(userAtom); // Assuming you have a user atom
+  // user jotai atom
+  const [jotaiUser, setJotaiUser] = useAtom(userAtom);
 
   // checks if fields are not empty and continue button is enabled
   const areFieldsValid = () => {
@@ -63,7 +63,8 @@ export default function Profile() {
         firstName,
         lastName,
         address,
-        profileImage,
+        phone,
+        profileImage: profileImage ?? undefined,
       }));
       router.push('/complete');
     }
@@ -130,6 +131,18 @@ export default function Profile() {
                   value={address}
                   onChangeText={setAddress}
                   placeholder={`Enter your address`}
+                  placeholderTextColor="#94a3b8"
+                />
+              </View>
+
+              <View style={styles.inputSection}>
+                <Text style={styles.inputLabel}>Phone number</Text>
+                <TextInput
+                  style={styles.textInput}
+                  value={phone ? phone.toString() : ''}
+                  keyboardType="phone-pad"
+                  onChangeText={(text) => setPhone(Number(text))}
+                  placeholder={`Enter your phone number`}
                   placeholderTextColor="#94a3b8"
                 />
               </View>
