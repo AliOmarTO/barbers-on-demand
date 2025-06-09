@@ -10,6 +10,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { useAtom } from 'jotai';
+import { userAtom } from '@/store/userAtom';
 
 export default function RootLayout() {
   const [initializing, setInitializing] = useState(true);
@@ -20,6 +22,8 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+
+  const [jotaiUser, setJotaiUser] = useAtom(userAtom);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -44,9 +48,17 @@ export default function RootLayout() {
     // Check if the first segment is '(auth)' to determine if in auth group(protected routes)
     const inAuthGroup = segments[0] === '(auth)';
 
-    if (user && !inAuthGroup) {
+    // if user is a first time user, redirect to onboarding
+    if (user && !inAuthGroup && !jotaiUser?.completedOnboarding) {
+      console.log('Redirecting to onboarding');
+      router.replace('/(onboarding)/welcome');
+    }
+    // if user is not a first time user, redirect to home
+    else if (user && !inAuthGroup && jotaiUser?.completedOnboarding) {
+      console.log('Redirecting to home');
       router.replace('/(auth)/(tabs)/home');
     } else if (!user && inAuthGroup) {
+      console.log('Redirecting to login screen');
       router.replace('/');
     }
   }, [user, initializing]);

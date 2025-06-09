@@ -18,7 +18,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarShowLabel: false,
+
         tabBarActiveTintColor: 'red',
         //tabBarStyle: hideTabs ? { display: 'none' } : undefined,
       }}
@@ -33,7 +33,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="map"
         options={{
-          title: 'Explore',
+          title: 'Map',
           tabBarIcon: ({ color }) => <FontAwesome size={28} name="map" color={color} />,
         }}
       />

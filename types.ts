@@ -1,3 +1,26 @@
+export interface Booking {
+  id: string;
+  barber: Barber;
+  serviceType: string; // 'shop' | 'house'
+  paymentMethod: string;
+  notes?: string;
+  date: string;
+  time: string;
+  location: string;
+}
+
+export interface JotaiUser {
+  id: string;
+  name: string;
+  completedOnboarding?: boolean;
+  type?: 'barber' | 'client';
+  address?: string;
+  email: string;
+  phone?: string;
+  avatar?: string;
+  bookings?: Booking[];
+}
+
 export interface Barber {
   id: string;
   name: string;
@@ -13,13 +36,4 @@ export interface Barber {
   };
 }
 
-export interface Booking {
-  id: string;
-  barber: Barber;
-  serviceType: string; // 'shop' | 'house'
-  paymentMethod: string;
-  notes?: string;
-  date: string;
-  time: string;
-  location: string;
-}
+export interface Client extends User {}

@@ -3,6 +3,7 @@ import '@/global.css';
 import { FirebaseError } from 'firebase/app';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
+import { JotaiUser } from '@/types';
 import {
   View,
   Text,
@@ -18,6 +19,8 @@ import {
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
+import { useAtom } from 'jotai';
+import { userAtom } from '@/store/userAtom';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -25,6 +28,8 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+
+  const [user, setUser] = useAtom(userAtom);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -73,8 +78,22 @@ export default function LoginScreen() {
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      // create a User object
 
       const user = userCredential.user;
+
+      const newUser: JotaiUser = {
+        id: user.uid,
+        name: 'New User',
+        email: user.email || email,
+        // set user type on onbaording screen
+        completedOnboarding: false,
+        bookings: [],
+      };
+
+      // setting jotai user atom
+      setUser(newUser);
+
       console.log('User signed up:', user);
     } catch (e: any) {
       const err = e as FirebaseError;
