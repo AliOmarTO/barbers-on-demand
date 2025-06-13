@@ -1,4 +1,4 @@
-import { JotaiUser } from '@/types';
+import { BarberOnboardingData, JotaiUser } from '@/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { atom } from 'jotai';
 import { atomWithStorage, createJSONStorage } from 'jotai/utils';
@@ -15,3 +15,5 @@ export const registeredUsersAtom = atomWithStorage<JotaiUser[]>(
 );
 
 export const wasJustSignedUpAtom = atom(false);
+
+export const BarberOnboardingAtom = atom<BarberOnboardingData>();

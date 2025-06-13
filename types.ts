@@ -37,4 +37,24 @@ export interface Barber {
   };
 }
 
+export interface BarberOnboardingData {
+  firstName: string;
+  lastName: string;
+  address: {
+    street: string;
+    city: string;
+    province: string;
+    postalCode: string;
+  };
+  businessType: 'mobile' | 'shop' | 'both';
+  availability: {
+    [key: string]: {
+      isAvailable: boolean;
+      startTime: string;
+      endTime: string;
+    };
+  };
+  photos: string[];
+}
+
 export interface Client extends User {}
