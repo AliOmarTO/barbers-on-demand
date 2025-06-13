@@ -22,7 +22,13 @@ export default function Welcome() {
       // Update the user atom with the selected type either barber or client
       setJotaiUser((prev) => ({ ...prev!, type: selectedType }));
 
-      router.push('/(onboarding)/profile');
+      // Navigate to the profile setup screen based on the selected type
+      if (selectedType === 'client') {
+        router.push('/(onboarding)/(client)/client-profile');
+      } else {
+        // For barber, navigate to barber profile setup
+        router.push('/(onboarding)/(barber)/barber-profile');
+      }
     }
   };
 

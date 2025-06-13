@@ -10,7 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '@/firebaseConfig';
 import { useAtom } from 'jotai';
-import { userAtom } from '@/store/userAtom';
+import { registeredUsersAtom, userAtom } from '@/store/userAtom';
 
 // Mock user data
 const userData = {
@@ -24,6 +24,15 @@ const SettingsScreen = () => {
   const user = auth.currentUser;
 
   const [jotaiUser, setJotaiUser] = useAtom(userAtom);
+
+  const handleSignOut = async () => {
+    try {
+      await auth.signOut();
+      setJotaiUser(null); // Clear user state
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -55,7 +64,7 @@ const SettingsScreen = () => {
               <View style={styles.infoContent}>
                 <Text style={styles.infoLabel}>Full Name</Text>
                 <Text style={styles.infoValue}>
-                  {jotaiUser!.firstName + ' ' + jotaiUser!.lastName}
+                  {jotaiUser?.firstName + ' ' + jotaiUser?.lastName}
                 </Text>
               </View>
               <TouchableOpacity style={styles.editButton}>
@@ -158,7 +167,7 @@ const SettingsScreen = () => {
         <View style={styles.signOutContainer}>
           <TouchableOpacity
             style={styles.signOutButton}
-            onPress={() => auth.signOut()}
+            onPress={handleSignOut}
             activeOpacity={0.8}
           >
             <Ionicons name="log-out-outline" size={20} color="#FFF" style={styles.signOutIcon} />

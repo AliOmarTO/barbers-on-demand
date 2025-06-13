@@ -19,8 +19,9 @@ import {
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
-import { useAtom } from 'jotai';
-import { registeredUsersAtom, userAtom } from '@/store/userAtom';
+import { useAtom, useSetAtom } from 'jotai';
+import { registeredUsersAtom, userAtom, wasJustSignedUpAtom } from '@/store/userAtom';
+import { useRouter } from 'expo-router';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -29,8 +30,11 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
 
+  const router = useRouter();
+
   const [user, setUser] = useAtom(userAtom);
   const [registeredUsers, setRegisteredUsers] = useAtom(registeredUsersAtom);
+  const setWasJustSignedUp = useSetAtom(wasJustSignedUpAtom);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -105,6 +109,8 @@ export default function LoginScreen() {
       // setting jotai user atom
       setUser(newUser);
 
+      // let it known that user has to go through onboarding flow now
+      setWasJustSignedUp(true);
       console.log('User signed up:', user);
     } catch (e: any) {
       const err = e as FirebaseError;

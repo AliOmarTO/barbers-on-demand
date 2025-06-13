@@ -14,7 +14,12 @@ export default function Complete() {
     // Here you would typically save the user data and navigate to the main app
     // For now, we'll just navigate to a placeholder main screen
     setJotaiUser((prev) => ({ ...prev!, completedOnboarding: true }));
-    setJotaiUsers((prev) => [...prev, jotaiUser!]); // Add the user to the registered users atom
+
+    // becasue its AsyncStorage, we have to await the promise then update
+    setJotaiUsers(async (prevPromise) => {
+      const prev = await prevPromise;
+      return [...prev, jotaiUser!];
+    });
     router.replace('/(tabs)/home');
   };
 
@@ -150,7 +155,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     flex: 1,
   },
-  
+
   nextSteps: {
     width: '100%',
     marginBottom: 32,

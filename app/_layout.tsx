@@ -11,7 +11,7 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useAtom } from 'jotai';
-import { registeredUsersAtom, userAtom } from '@/store/userAtom';
+import { registeredUsersAtom, userAtom, wasJustSignedUpAtom } from '@/store/userAtom';
 
 export default function RootLayout() {
   const [initializing, setInitializing] = useState(true);
@@ -25,6 +25,8 @@ export default function RootLayout() {
 
   const [jotaiUser, setJotaiUser] = useAtom(userAtom);
   const [registeredUsers, setRegisteredUsers] = useAtom(registeredUsersAtom);
+  const [wasJustSignedUp, setWasJustSignedUp] = useAtom(wasJustSignedUpAtom);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
@@ -48,13 +50,19 @@ export default function RootLayout() {
     // Check if the first segment is '(auth)' to determine if in auth group(protected routes)
     const inAuthGroup = segments[0] === '(auth)';
 
-    // if user is a first time user, redirect to onboarding
-    if (user && !inAuthGroup && !jotaiUser?.completedOnboarding) {
-      console.log('Redirecting to onboarding');
-      router.replace('/(onboarding)/welcome');
-    }
+    // // if user is a first time user, redirect to onboarding
+    // if (user && !inAuthGroup && !jotaiUser?.completedOnboarding) {
+    //   console.log('Redirecting to onboarding');
+    //   router.replace('/(onboarding)/welcome');
+    // }
     // if user is not a first time user, redirect to home
-    else if (user && !inAuthGroup && jotaiUser?.completedOnboarding) {
+
+    if (wasJustSignedUp) {
+      // If the user just signed up, redirect to onboarding flow
+      console.log('Redirecting to onboarding flow');
+      router.push('/(onboarding)/welcome');
+      setWasJustSignedUp(false); // Reset the flag
+    } else if (user && !inAuthGroup) {
       console.log('Redirecting to home');
       router.replace('/(auth)/(tabs)/home');
     } else if (!user && inAuthGroup) {
