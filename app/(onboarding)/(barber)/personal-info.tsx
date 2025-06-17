@@ -163,7 +163,9 @@ export default function PersonalInfoScreen() {
           <View style={styles.content}>
             <View style={styles.header}>
               <Text style={styles.title}>Professional Information</Text>
-              <Text style={styles.subtitle}>Let's set up your professional barber profile</Text>
+              <Text style={styles.subtitle}>
+                Let&apos;s set up your professional barber profile
+              </Text>
             </View>
 
             <View style={styles.form}>

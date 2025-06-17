@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -15,12 +15,18 @@ import { BarberOnboardingData } from '@/types';
 import { useRouter } from 'expo-router';
 import { useAtom } from 'jotai';
 import { BarberOnboardingAtom } from '@/store/userAtom';
+import { barberPortfolioAtom } from '@/store/createdBarberAtom';
 
 export default function PhotosScreen() {
   const router = useRouter();
 
-  const [onboardingData, setOnboardingData] = useAtom(BarberOnboardingAtom);
-  const [photos, setPhotos] = useState<string[]>(onboardingData.photos);
+  const [portfolioImages, setPortfolioImages] = useAtom(barberPortfolioAtom);
+  const [photos, setPhotos] = useState<string[]>(portfolioImages);
+
+  // Sync local state with atom
+  useEffect(() => {
+    setPhotos(portfolioImages);
+  }, [portfolioImages]);
 
   const requestPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -81,16 +87,27 @@ export default function PhotosScreen() {
   };
 
   const handleNext = () => {
-    setOnboardingData({
-      ...data,
-      photos,
-    });
+    // Update the barber atom with the portfolio images
+    setPortfolioImages(photos);
+    router.push('/(onboarding)/(barber)/review');
+  };
 
-    router.navigate('Review');
+  const handleSkip = () => {
+    // Clear photos and continue
+    setPortfolioImages([]);
+    router.push('/(onboarding)/(barber)/review');
   };
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Skip button */}
+      <View className="flex-row justify-end mb-3 mr-8">
+        <TouchableOpacity>
+          <Text className="text-lg font-medium" style={{ color: '#cc001e' }}>
+            Skip
+          </Text>
+        </TouchableOpacity>
+      </View>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <View style={styles.header}>

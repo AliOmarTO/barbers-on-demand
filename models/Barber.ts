@@ -359,11 +359,11 @@ export class Barber {
   private getDefaultAvailability(): Availability[] {
     // Default: Monday-Friday 9 AM to 5 PM
     return [
-      { dayOfWeek: 1, startTime: '09:00', endTime: '17:00', isAvailable: true },
-      { dayOfWeek: 2, startTime: '09:00', endTime: '17:00', isAvailable: true },
-      { dayOfWeek: 3, startTime: '09:00', endTime: '17:00', isAvailable: true },
-      { dayOfWeek: 4, startTime: '09:00', endTime: '17:00', isAvailable: true },
-      { dayOfWeek: 5, startTime: '09:00', endTime: '17:00', isAvailable: true },
+      { dayOfWeek: 1, startTime: '09:00', endTime: '17:00', isAvailable: false },
+      { dayOfWeek: 2, startTime: '09:00', endTime: '17:00', isAvailable: false },
+      { dayOfWeek: 3, startTime: '09:00', endTime: '17:00', isAvailable: false },
+      { dayOfWeek: 4, startTime: '09:00', endTime: '17:00', isAvailable: false },
+      { dayOfWeek: 5, startTime: '09:00', endTime: '17:00', isAvailable: false },
     ];
   }
 

@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAtom } from 'jotai';
 import { barberServicesAtom } from '@/store/createdBarberAtom';
 import { Service } from '@/models/Barber';
+import { useRouter } from 'expo-router';
 
 interface Props {
   navigation: any;
@@ -65,7 +66,8 @@ const POPULAR_SERVICES = [
   },
 ];
 
-export default function ServicesOfferedScreen({ navigation }: Props) {
+export default function ServicesOfferedScreen() {
+  const router = useRouter();
   const [services, setServices] = useAtom(barberServicesAtom);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
@@ -187,8 +189,10 @@ export default function ServicesOfferedScreen({ navigation }: Props) {
       Alert.alert('Error', 'Please add at least one service before continuing');
       return;
     }
-    navigation.navigate('Availability');
+    router.push('/(onboarding)/(barber)/availability');
   };
+
+  
 
   const formatPrice = (price: number) => {
     return `$${price.toFixed(2)}`;

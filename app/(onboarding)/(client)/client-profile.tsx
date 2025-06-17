@@ -66,7 +66,7 @@ export default function Profile() {
         phone,
         profileImage: profileImage ?? undefined,
       }));
-      router.push('/complete');
+      router.push('/common/complete');
     }
   };
 

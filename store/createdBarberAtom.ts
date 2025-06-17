@@ -7,6 +7,7 @@ import {
   MobileServiceInfo,
   ShopInfo,
   Service,
+  Availability,
 } from '../models/Barber';
 
 // Create initial barber instance
@@ -129,7 +130,7 @@ export const barberShopAtom = atom(
 
 export const barberAvailabilityAtom = atom(
   (get) => get(barberAtom).weeklyAvailability,
-  (get, set, availability: typeof Barber.prototype.weeklyAvailability) => {
+  (get, set, availability: Availability[]) => {
     const barber = get(barberAtom);
     const updatedBarber = new Barber({
       ...barber,
@@ -139,7 +140,6 @@ export const barberAvailabilityAtom = atom(
     set(barberAtom, updatedBarber);
   }
 );
-
 
 export const barberServicesAtom = atom(
   (get) => get(barberAtom).services,

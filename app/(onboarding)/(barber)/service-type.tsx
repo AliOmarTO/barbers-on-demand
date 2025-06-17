@@ -48,7 +48,7 @@ export default function BusinessTypeScreen() {
       icon: 'car-outline',
     },
     {
-      type: 'both' as BusinessType,
+      type: ServiceType.BOTH,
       title: 'Both Options',
       description: 'Offer both in-shop and mobile services',
       icon: 'options-outline',
@@ -227,7 +227,7 @@ export default function BusinessTypeScreen() {
       <ScrollView style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.title}>How do you serve clients?</Text>
-          <Text style={styles.subtitle}>Choose how you'd like to provide your services</Text>
+          <Text style={styles.subtitle}>Choose how you&apos;d like to provide your services</Text>
         </View>
 
         <View style={styles.options}>

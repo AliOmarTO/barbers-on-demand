@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -9,19 +9,19 @@ import {
   Switch,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { BarberOnboardingData } from '@/types';
 import { useRouter } from 'expo-router';
 import { useAtom } from 'jotai';
-import { BarberOnboardingAtom } from '@/store/userAtom';
+import { barberAvailabilityAtom } from '@/store/createdBarberAtom';
+import { Availability } from '@/models/Barber';
 
 const days = [
-  { key: 'monday', label: 'Monday' },
-  { key: 'tuesday', label: 'Tuesday' },
-  { key: 'wednesday', label: 'Wednesday' },
-  { key: 'thursday', label: 'Thursday' },
-  { key: 'friday', label: 'Friday' },
-  { key: 'saturday', label: 'Saturday' },
-  { key: 'sunday', label: 'Sunday' },
+  { key: 0, label: 'Monday' },
+  { key: 1, label: 'Tuesday' },
+  { key: 2, label: 'Wednesday' },
+  { key: 3, label: 'Thursday' },
+  { key: 4, label: 'Friday' },
+  { key: 5, label: 'Saturday' },
+  { key: 6, label: 'Sunday' },
 ];
 
 const timeSlots = [
@@ -43,67 +43,117 @@ const timeSlots = [
 export default function AvailabilityScreen() {
   const router = useRouter();
 
-  const [onboardingData, setOnboardingData] = useAtom(BarberOnboardingAtom);
-  const [availability, setAvailability] = useState(onboardingData.availability);
-  const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const [weeklyAvailability, setWeeklyAvailability] = useAtom(barberAvailabilityAtom);
+  const [selectedTimeSelector, setSelectedTimeSelector] = useState<string | null>(null);
 
-  const toggleDayAvailability = (day: string) => {
-    setAvailability((prev) => ({
+  // Convert Barber class availability array to a more convenient object format for the UI
+  const [availabilityByDay, setAvailabilityByDay] = useState<{
+    [key: number]: {
+      isAvailable: boolean;
+      startTime: string;
+      endTime: string;
+    };
+  }>({});
+
+  // Initialize availability from Barber class on component mount
+  useEffect(() => {
+    const availObj = days.reduce((acc, day) => {
+      const dayAvail = weeklyAvailability.find((a) => a.dayOfWeek === day.key);
+      acc[day.key] = {
+        isAvailable: dayAvail ? dayAvail.isAvailable : false,
+        startTime: dayAvail ? dayAvail.startTime : '09:00',
+        endTime: dayAvail ? dayAvail.endTime : '17:00',
+      };
+      return acc;
+    }, {} as any);
+
+    setAvailabilityByDay(availObj);
+  }, [weeklyAvailability]);
+
+  const toggleDayAvailability = (dayOfWeek: number) => {
+    setAvailabilityByDay((prev) => ({
       ...prev,
-      [day]: {
-        ...prev[day],
-        isAvailable: !prev[day].isAvailable,
+      [dayOfWeek]: {
+        ...prev[dayOfWeek],
+        isAvailable: !prev[dayOfWeek].isAvailable,
       },
     }));
   };
 
-  const updateTime = (day: string, timeType: 'startTime' | 'endTime', time: string) => {
-    setAvailability((prev) => ({
+  const updateTime = (dayOfWeek: number, timeType: 'startTime' | 'endTime', time: string) => {
+    setAvailabilityByDay((prev) => ({
       ...prev,
-      [day]: {
-        ...prev[day],
+      [dayOfWeek]: {
+        ...prev[dayOfWeek],
         [timeType]: time,
       },
     }));
-    setSelectedDay(null);
+    setSelectedTimeSelector(null);
   };
 
   const handleNext = () => {
-    const hasAvailability = Object.values(availability).some((day) => day.isAvailable);
+    const hasAvailability = Object.values(availabilityByDay).some((day) => day.isAvailable);
 
     if (!hasAvailability) {
       alert('Please select at least one day of availability');
       return;
     }
 
-    setOnboardingData({
-      ...onboardingData,
-      availability,
-    });
+    // Convert back to Barber class availability format
+    const newAvailability: Availability[] = Object.entries(availabilityByDay).map(
+      ([dayKey, value]) => ({
+        dayOfWeek: parseInt(dayKey),
+        startTime: value.startTime,
+        endTime: value.endTime,
+        isAvailable: value.isAvailable,
+      })
+    );
 
-    router.push('/(onboarding)/(barber)/business-type');
+    // Update the atom
+    setWeeklyAvailability(newAvailability);
+
+    // Navigate to next screen
+    router.push('/(onboarding)/(barber)/photos');
   };
 
-  const renderTimeSelector = (day: string, timeType: 'startTime' | 'endTime') => {
-    if (selectedDay !== `${day}-${timeType}`) return null;
+  const handleSkip = () => {
+    // Set default availability (e.g., Monday-Friday 9-5)
+    const defaultAvailability: Availability[] = [
+      { dayOfWeek: 1, startTime: '09:00', endTime: '17:00', isAvailable: false },
+      { dayOfWeek: 2, startTime: '09:00', endTime: '17:00', isAvailable: false },
+      { dayOfWeek: 3, startTime: '09:00', endTime: '17:00', isAvailable: false },
+      { dayOfWeek: 4, startTime: '09:00', endTime: '17:00', isAvailable: false },
+      { dayOfWeek: 5, startTime: '09:00', endTime: '17:00', isAvailable: false },
+      { dayOfWeek: 0, startTime: '09:00', endTime: '17:00', isAvailable: false },
+      { dayOfWeek: 6, startTime: '09:00', endTime: '17:00', isAvailable: false },
+    ];
+
+    setWeeklyAvailability(defaultAvailability);
+    router.push('/(onboarding)/(barber)/photos');
+  };
+
+  const renderTimeSelector = (dayOfWeek: number, timeType: 'startTime' | 'endTime') => {
+    if (selectedTimeSelector !== `${dayOfWeek}-${timeType}`) return null;
 
     return (
-      <View style={styles.timeSelector}>
+      <View className="mt-2">
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {timeSlots.map((time) => (
             <TouchableOpacity
               key={time}
-              style={[
-                styles.timeSlot,
-                availability[day][timeType] === time && styles.selectedTimeSlot,
-              ]}
-              onPress={() => updateTime(day, timeType, time)}
+              className={`px-4 py-2 mr-2 rounded-lg border ${
+                availabilityByDay[dayOfWeek][timeType] === time
+                  ? 'bg-red-600 border-red-300'
+                  : 'bg-gray-100 border-gray-200'
+              }`}
+              onPress={() => updateTime(dayOfWeek, timeType, time)}
             >
               <Text
-                style={[
-                  styles.timeSlotText,
-                  availability[day][timeType] === time && styles.selectedTimeSlotText,
-                ]}
+                className={`text-sm ${
+                  availabilityByDay[dayOfWeek][timeType] === time
+                    ? 'text-white font-semibold'
+                    : 'text-gray-600'
+                }`}
               >
                 {time}
               </Text>
@@ -115,73 +165,107 @@ export default function AvailabilityScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.content}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Set your availability</Text>
-            <Text style={styles.subtitle}>
-              Let clients know when you're available for appointments
-            </Text>
-          </View>
+    <SafeAreaView className="flex-1 bg-white">
+      {/* Skip button */}
+      <View className="flex-row justify-end mb-3 mr-8">
+        <TouchableOpacity onPress={handleSkip}>
+          <Text className="text-lg font-medium text-red-600">Skip</Text>
+        </TouchableOpacity>
+      </View>
 
-          <View style={styles.daysContainer}>
-            {days.map(({ key, label }) => (
-              <View key={key} style={styles.dayContainer}>
-                <View style={styles.dayHeader}>
-                  <Text style={styles.dayLabel}>{label}</Text>
-                  <Switch
-                    value={availability[key].isAvailable}
-                    onValueChange={() => toggleDayAvailability(key)}
-                    trackColor={{ false: '#e5e7eb', true: '#FFD6D1' }}
-                    thumbColor={availability[key].isAvailable ? '#cc001e' : '#f3f4f6'}
-                  />
-                </View>
+      <View className="px-6 mb-8">
+        <Text className="text-3xl font-bold text-gray-900 mb-2">Set your availability</Text>
+        <Text className="text-base text-gray-600">
+          Let clients know when you're available for appointments
+        </Text>
+      </View>
 
-                {availability[key].isAvailable && (
-                  <View style={styles.timeContainer}>
-                    <TouchableOpacity
-                      style={styles.timeButton}
-                      onPress={() =>
-                        setSelectedDay(
-                          selectedDay === `${key}-startTime` ? null : `${key}-startTime`
-                        )
-                      }
-                    >
-                      <Text style={styles.timeButtonLabel}>Start Time</Text>
-                      <View style={styles.timeButtonValue}>
-                        <Text style={styles.timeText}>{availability[key].startTime}</Text>
-                        <Ionicons name="chevron-down" size={16} color="#6b7280" />
-                      </View>
-                    </TouchableOpacity>
-
-                    {renderTimeSelector(key, 'startTime')}
-
-                    <TouchableOpacity
-                      style={styles.timeButton}
-                      onPress={() =>
-                        setSelectedDay(selectedDay === `${key}-endTime` ? null : `${key}-endTime`)
-                      }
-                    >
-                      <Text style={styles.timeButtonLabel}>End Time</Text>
-                      <View style={styles.timeButtonValue}>
-                        <Text style={styles.timeText}>{availability[key].endTime}</Text>
-                        <Ionicons name="chevron-down" size={16} color="#6b7280" />
-                      </View>
-                    </TouchableOpacity>
-
-                    {renderTimeSelector(key, 'endTime')}
-                  </View>
-                )}
+      <ScrollView className="flex-1 px-6" showsVerticalScrollIndicator={false}>
+        <View className="pb-32">
+          {days.map(({ key, label }) => (
+            <View
+              key={key}
+              className={`border rounded-xl p-4 mb-4 ${
+                availabilityByDay[key]?.isAvailable ? 'border-red-200 bg-red-50' : 'border-gray-200'
+              }`}
+            >
+              <View className="flex-row justify-between items-center">
+                <Text className="text-lg font-semibold text-gray-900">{label}</Text>
+                <Switch
+                  value={availabilityByDay[key]?.isAvailable || false}
+                  onValueChange={() => toggleDayAvailability(key)}
+                  trackColor={{ false: '#e5e7eb', true: '#FFD6D1' }}
+                  thumbColor={availabilityByDay[key]?.isAvailable ? '#cc001e' : '#f3f4f6'}
+                />
               </View>
-            ))}
-          </View>
+
+              {availabilityByDay[key]?.isAvailable && (
+                <View className="mt-4 space-y-3">
+                  <TouchableOpacity
+                    className="flex-row justify-between items-center px-4 py-3 mb-4 bg-white rounded-lg border border-gray-200"
+                    onPress={() =>
+                      setSelectedTimeSelector(
+                        selectedTimeSelector === `${key}-startTime` ? null : `${key}-startTime`
+                      )
+                    }
+                  >
+                    <Text className="text-sm text-gray-500">Start Time</Text>
+                    <View className="flex-row items-center">
+                      <Text className="text-base font-semibold text-gray-900 mr-2">
+                        {availabilityByDay[key]?.startTime}
+                      </Text>
+                      <Ionicons
+                        name={
+                          selectedTimeSelector === `${key}-startTime`
+                            ? 'chevron-up'
+                            : 'chevron-down'
+                        }
+                        size={16}
+                        color="#6b7280"
+                      />
+                    </View>
+                  </TouchableOpacity>
+
+                  {renderTimeSelector(key, 'startTime')}
+
+                  <TouchableOpacity
+                    className="flex-row justify-between items-center px-4 py-3 bg-white rounded-lg border border-gray-200"
+                    onPress={() =>
+                      setSelectedTimeSelector(
+                        selectedTimeSelector === `${key}-endTime` ? null : `${key}-endTime`
+                      )
+                    }
+                  >
+                    <Text className="text-sm text-gray-500">End Time</Text>
+                    <View className="flex-row items-center">
+                      <Text className="text-base font-semibold text-gray-900 mr-2">
+                        {availabilityByDay[key]?.endTime}
+                      </Text>
+                      <Ionicons
+                        name={
+                          selectedTimeSelector === `${key}-endTime` ? 'chevron-up' : 'chevron-down'
+                        }
+                        size={16}
+                        color="#6b7280"
+                      />
+                    </View>
+                  </TouchableOpacity>
+
+                  {renderTimeSelector(key, 'endTime')}
+                </View>
+              )}
+            </View>
+          ))}
         </View>
       </ScrollView>
 
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-          <Text style={styles.nextButtonText}>Next</Text>
+      <View className="absolute bottom-0 left-0 right-0 px-6 py-6 bg-white border-t border-gray-200 shadow-2xl">
+        <TouchableOpacity
+          className="bg-red-600 rounded-xl py-4 px-6 items-center shadow-lg active:bg-red-700"
+          onPress={handleNext}
+          activeOpacity={0.9}
+        >
+          <Text className="text-white text-lg font-bold">Continue</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
