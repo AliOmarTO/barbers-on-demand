@@ -19,8 +19,9 @@ import {
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
-import { useAtom } from 'jotai';
-import { userAtom } from '@/store/userAtom';
+import { useAtom, useSetAtom } from 'jotai';
+import { registeredUsersAtom, userAtom, wasJustSignedUpAtom } from '@/store/userAtom';
+import { useRouter } from 'expo-router';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -29,7 +30,11 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
 
+  const router = useRouter();
+
   const [user, setUser] = useAtom(userAtom);
+  const [registeredUsers, setRegisteredUsers] = useAtom(registeredUsersAtom);
+  const setWasJustSignedUp = useSetAtom(wasJustSignedUpAtom);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -49,7 +54,16 @@ export default function LoginScreen() {
     setLoading(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const firebaseUser = await signInWithEmailAndPassword(auth, email, password);
+      // retrive user object from array in jotai
+      const userCredential = firebaseUser.user;
+
+      const loggedInUser = registeredUsers.find((u) => u.id === userCredential.uid);
+      if (loggedInUser) {
+        setUser(loggedInUser);
+      } else {
+        Alert.alert('Error', 'User not found in registered users.');
+      }
     } catch (e: any) {
       const err = e as FirebaseError;
       alert('Login failed: ' + err.message);
@@ -84,7 +98,8 @@ export default function LoginScreen() {
 
       const newUser: JotaiUser = {
         id: user.uid,
-        name: 'New User',
+        firstName: '', // set default empty values
+        lastName: '',
         email: user.email || email,
         // set user type on onbaording screen
         completedOnboarding: false,
@@ -94,6 +109,8 @@ export default function LoginScreen() {
       // setting jotai user atom
       setUser(newUser);
 
+      // let it known that user has to go through onboarding flow now
+      setWasJustSignedUp(true);
       console.log('User signed up:', user);
     } catch (e: any) {
       const err = e as FirebaseError;
@@ -119,7 +136,7 @@ export default function LoginScreen() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
           <Image
-            source={require('@/assets/images/bodLogo.png')} // Adjust path as needed
+            source={require('@/assets/images/bodLogo.png')}
             style={styles.logo}
             resizeMode="contain"
           />

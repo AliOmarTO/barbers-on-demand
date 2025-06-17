@@ -1,233 +1,255 @@
-// home screen for barber booking app
-
-import { useState } from 'react';
+import React from 'react';
 import {
+  StyleSheet,
   View,
   Text,
-  StyleSheet,
-  FlatList,
+  SafeAreaView,
+  ScrollView,
   Image,
   TouchableOpacity,
-  SafeAreaView,
-  Pressable,
-  TextInput,
+  FlatList,
 } from 'react-native';
-import { Ionicons, AntDesign } from '@expo/vector-icons';
-import BarberCard from '@/components/BarberCard';
-import { useAtom } from 'jotai';
-import { barbersAtom } from '@/store/barberAtom';
+import { StatusBar } from 'expo-status-bar';
+import { Ionicons } from '@expo/vector-icons';
 
-// Search Bar Component
-const SearchBar = ({
-  searchQuery,
-  setSearchQuery,
-}: {
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-}) => {
+// Types
+interface BarberShop {
+  id: string;
+  name: string;
+  rating: number;
+  reviews: number;
+  location: string;
+  image: string;
+  tags: string[];
+}
+
+// Mock data
+const recommendedShops: BarberShop[] = [
+  {
+    id: '1',
+    name: 'Classic Cuts',
+    rating: 5.0,
+    reviews: 97,
+    location: 'Downtown, Toronto',
+    image:
+      'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2074&q=80',
+    tags: ['Barber Shop'],
+  },
+  {
+    id: '2',
+    name: 'Fade Masters',
+    rating: 5.0,
+    reviews: 1238,
+    location: '1314 King Street West',
+    image:
+      'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+    tags: ['Hair Salon'],
+  },
+];
+
+const newShops: BarberShop[] = [
+  {
+    id: '3',
+    name: "Gentleman's Grooming",
+    rating: 4.9,
+    reviews: 135,
+    location: 'Midtown, Toronto',
+    image:
+      'https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+    tags: ['Barber Shop'],
+  },
+  {
+    id: '4',
+    name: 'Style Studio',
+    rating: 5.0,
+    reviews: 56,
+    location: 'Yorkville, Toronto',
+    image:
+      'https://images.unsplash.com/photo-1622288432450-277d0fef5ed6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+    tags: ['Beauty Salon'],
+  },
+];
+
+const mobileBarbers: BarberShop[] = [
+  {
+    id: '5',
+    name: 'Liam Edwards',
+    rating: 4.8,
+    reviews: 203,
+    location: 'Liberty Village, Toronto',
+    image:
+      'https://plus.unsplash.com/premium_photo-1689533448099-2dc408030f0f?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    tags: ['Barber Shop'],
+  },
+  {
+    id: '6',
+    name: 'Jane Kim',
+    rating: 4.7,
+    reviews: 189,
+    location: 'Queen West, Toronto',
+    image:
+      'https://plus.unsplash.com/premium_photo-1689530775582-83b8abdb5020?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    tags: ['Barber Shop', 'Lounge'],
+  },
+];
+
+// Shop Card Component
+const ShopCard = ({ shop }: { shop: BarberShop }) => {
   return (
-    <View style={styles.searchContainer}>
-      <View style={styles.searchInputContainer}>
-        <Ionicons name="search" size={20} color="#888" style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search barbers..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholderTextColor="#888"
-          returnKeyType="search"
-        />
-        {searchQuery.length > 0 && (
-          <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearButton}>
-            <Ionicons name="close-circle" size={20} color="#888" />
-          </TouchableOpacity>
-        )}
+    <TouchableOpacity style={styles.card}>
+      <Image source={{ uri: shop.image }} style={styles.cardImage} />
+      <View style={styles.cardContent}>
+        <Text style={styles.shopName}>{shop.name}</Text>
+        <View style={styles.ratingContainer}>
+          <Text style={styles.rating}>{shop.rating}</Text>
+          <Ionicons name="star" size={16} color="#FFD700" />
+          <Text style={styles.reviews}> ({shop.reviews})</Text>
+        </View>
+        <Text style={styles.location}>{shop.location}</Text>
+        <View style={styles.tagsContainer}>
+          {shop.tags.map((tag, index) => (
+            <View key={index} style={styles.tagBadge}>
+              <Text style={styles.tagText}>{tag}</Text>
+            </View>
+          ))}
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
-// Main Component
-const BarberBookingScreen = () => {
-  // jotai barbers
-  const [barbersList] = useAtom(barbersAtom);
-  const [barbers, setBarbers] = useState(barbersList);
-  const [showingAll, setShowingAll] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+// Section Header Component
+const SectionHeader = ({ title }: { title: string }) => (
+  <Text style={styles.sectionTitle}>{title}</Text>
+);
 
-  const filteredBarbers = barbers.filter((barber) =>
-    barber.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+// Shop List Component
+const ShopList = ({ shops }: { shops: BarberShop[] }) => (
+  <FlatList
+    data={shops}
+    renderItem={({ item }) => <ShopCard shop={item} />}
+    keyExtractor={(item) => item.id}
+    horizontal
+    showsHorizontalScrollIndicator={false}
+    contentContainerStyle={styles.shopList}
+  />
+);
 
+export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      <FlatList
-        data={filteredBarbers}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <BarberCard barber={item} />}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-        bounces={true}
-      />
+      <StatusBar style="auto" />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Welcome Ali</Text>
+        </View>
+
+        <View style={styles.section}>
+          <SectionHeader title="Recommended" />
+          <ShopList shops={recommendedShops} />
+        </View>
+
+        <View style={styles.section}>
+          <SectionHeader title="New to Barbers On Demand" />
+          <ShopList shops={newShops} />
+        </View>
+
+        <View style={styles.section}>
+          <SectionHeader title="Mobile Barbers" />
+          <ShopList shops={mobileBarbers} />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
-    padding: 16,
+    backgroundColor: '#fff',
   },
-  headerContainer: {
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
-    paddingHorizontal: 4,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 24,
   },
-  headerText: {
+  headerTitle: {
+    fontSize: 25,
+    fontWeight: 'bold',
+  },
+  notificationButton: {
+    padding: 8,
+  },
+  section: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
     fontSize: 24,
-    fontWeight: '700',
-    color: '#1A1A1A',
+    fontWeight: 'bold',
+    paddingHorizontal: 16,
+    marginBottom: 16,
   },
-  dropdownButton: {
-    padding: 4,
-  },
-  listContainer: {
-    paddingBottom: 20,
+  shopList: {
+    paddingLeft: 16,
+    paddingRight: 8,
   },
   card: {
-    backgroundColor: 'white',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
+    width: 280,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    marginRight: 16,
+    overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
   },
+  cardImage: {
+    width: '100%',
+    height: 180,
+    resizeMode: 'cover',
+  },
   cardContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    padding: 12,
   },
-  barberInfoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    marginRight: 16,
-    backgroundColor: '#F0F0F0',
-  },
-  barberDetails: {
-    justifyContent: 'center',
-    flex: 1,
-  },
-  barberName: {
+  shopName: {
     fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 6,
-    color: '#1A1A1A',
+    fontWeight: 'bold',
+    marginBottom: 4,
   },
   ratingContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 4,
   },
-  clientCount: {
-    fontSize: 13,
-    color: '#888',
-    fontWeight: '400',
+  rating: {
+    fontWeight: 'bold',
+    marginRight: 2,
   },
-  priceActionContainer: {
-    alignItems: 'flex-end',
-    justifyContent: 'center',
+  reviews: {
+    color: '#666',
   },
-  price: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 12,
-    color: '#1A1A1A',
+  location: {
+    color: '#666',
+    marginBottom: 8,
   },
-  bookButton: {
-    backgroundColor: '#1A1A1A',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    minWidth: 90,
-    alignItems: 'center',
-  },
-  bookButtonText: {
-    color: 'white',
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  loadMoreButton: {
-    backgroundColor: 'white',
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    borderRadius: 30,
-    alignSelf: 'center',
-    marginTop: 8,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
-    minWidth: 120,
-    alignItems: 'center',
-  },
-  loadMoreText: {
-    fontWeight: '600',
-    color: '#333',
-    fontSize: 15,
-  },
-  searchContainer: {
-    margin: 16,
-  },
-  searchInputContainer: {
+  tagsContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    flexWrap: 'wrap',
   },
-  searchIcon: {
-    marginRight: 12,
+  tagBadge: {
+    backgroundColor: '#f3f4f6',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    marginRight: 8,
   },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    color: '#1A1A1A',
-    fontWeight: '400',
-  },
-  clearButton: {
-    padding: 4,
-  },
-  addressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 2,
-  },
-  addressText: {
+  tagText: {
     fontSize: 12,
-    color: '#888',
-    marginLeft: 4,
-    fontWeight: '400',
+    color: '#4b5563',
   },
 });
-
-export default BarberBookingScreen;
