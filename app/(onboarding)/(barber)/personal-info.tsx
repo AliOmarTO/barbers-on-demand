@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -14,23 +14,30 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { BarberOnboardingData } from '@/types';
 import { useAtom } from 'jotai';
-import { BarberOnboardingAtom } from '@/store/userAtom';
+import { barberBasicInfoAtom, barberBusinessInfoAtom } from '@/store/createdBarberAtom';
+import { useRouter } from 'expo-router';
 
 export default function PersonalInfoScreen() {
-  const [onboardingData, setOnboardingData] = useAtom(BarberOnboardingAtom);
-  const [firstName, setFirstName] = useState(onboardingData.firstName);
-  const [lastName, setLastName] = useState(onboardingData.lastName);
-  const [phone, setPhone] = useState(onboardingData.phone || '');
-  const [email, setEmail] = useState(onboardingData.email || '');
-  
-  const [professionalPhoto, setProfessionalPhoto] = useState(
-    onboardingData.professionalPhoto || ''
-  );
-  const [certificationPhoto, setCertificationPhoto] = useState(
-    onboardingData.certificationPhoto || ''
-  );
+  const router = useRouter();
+  const [basicInfo, setBasicInfo] = useAtom(barberBasicInfoAtom);
+  const [businessInfo, setBusinessInfo] = useAtom(barberBusinessInfoAtom);
+
+  const [firstName, setFirstName] = useState(basicInfo.firstName);
+  const [lastName, setLastName] = useState(basicInfo.lastName);
+  const [phone, setPhone] = useState(basicInfo.phone);
+  const [email, setEmail] = useState(basicInfo.email);
+  const [professionalPhoto, setProfessionalPhoto] = useState(basicInfo.profileImage || '');
+  const [certificationPhoto, setCertificationPhoto] = useState('');
+
+  // Update local state when atoms change
+  useEffect(() => {
+    setFirstName(basicInfo.firstName);
+    setLastName(basicInfo.lastName);
+    setPhone(basicInfo.phone);
+    setEmail(basicInfo.email);
+    setProfessionalPhoto(basicInfo.profileImage || '');
+  }, [basicInfo]);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -53,32 +60,21 @@ export default function PersonalInfoScreen() {
       return;
     }
 
-    if (!email.trim() || !validateEmail(email)) {
-      Alert.alert('Error', 'Please enter a valid email address');
-      return;
-    }
-
-    if (!professionalPhoto) {
-      Alert.alert('Error', 'Please upload a professional photo');
-      return;
-    }
-
-    if (!certificationPhoto) {
-      Alert.alert('Error', 'Please upload your certification/license');
-      return;
-    }
-
-    setData({
-      ...data,
+    // Update atoms with form data
+    setBasicInfo({
       firstName: firstName.trim(),
       lastName: lastName.trim(),
       phone: phone.trim(),
       email: email.trim(),
-      professionalPhoto,
-      certificationPhoto,
+      profileImage: professionalPhoto,
     });
 
-    navigation.navigate('Address');
+    setBusinessInfo({
+      ...businessInfo,
+      licenseNumber: certificationPhoto, // Store license image URL temporarily
+    });
+
+    router.push('/(onboarding)/(barber)/service-type');
   };
 
   const requestPermission = async () => {
@@ -217,26 +213,9 @@ export default function PersonalInfoScreen() {
                 />
               </View>
 
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>
-                  Email Address <Text style={styles.required}>*</Text>
-                </Text>
-                <TextInput
-                  style={styles.input}
-                  value={email}
-                  onChangeText={setEmail}
-                  placeholder="your.email@example.com"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-              </View>
-
               {/* Professional Photo */}
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>
-                  Professional Photo <Text style={styles.required}>*</Text>
-                </Text>
+                <Text style={styles.label}>Professional Photo</Text>
                 <Text style={styles.helperText}>Upload a clear, professional headshot</Text>
                 <TouchableOpacity
                   style={styles.photoUpload}
@@ -264,9 +243,7 @@ export default function PersonalInfoScreen() {
 
               {/* Certification/License */}
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>
-                  Certification/License <Text style={styles.required}>*</Text>
-                </Text>
+                <Text style={styles.label}>Certification/License</Text>
                 <Text style={styles.helperText}>Upload your barber license or certification</Text>
                 <TouchableOpacity
                   style={styles.photoUpload}

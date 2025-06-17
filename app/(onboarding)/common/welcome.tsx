@@ -27,7 +27,7 @@ export default function Welcome() {
         router.push('/(onboarding)/(client)/client-profile');
       } else {
         // For barber, navigate to barber profile setup
-        router.push('/(onboarding)/(barber)/barber-profile');
+        router.push('/(onboarding)/(barber)/personal-info');
       }
     }
   };

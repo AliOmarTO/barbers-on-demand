@@ -76,12 +76,12 @@ export default function AvailabilityScreen() {
       return;
     }
 
-    setData({
-      ...data,
+    setOnboardingData({
+      ...onboardingData,
       availability,
     });
 
-    navigation.navigate('Photos');
+    router.push('/(onboarding)/(barber)/business-type');
   };
 
   const renderTimeSelector = (day: string, timeType: 'startTime' | 'endTime') => {

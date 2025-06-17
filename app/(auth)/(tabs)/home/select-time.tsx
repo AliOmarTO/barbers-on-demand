@@ -71,7 +71,7 @@ export default function TimeSelector() {
       params: {
         time: selectedTime,
         date: `July ${selectedDate}`, // or full date string
-        location // 'shop or 'home'
+        location, // 'shop or 'home'
       },
     });
   };
