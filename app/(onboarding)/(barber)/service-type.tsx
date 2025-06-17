@@ -95,7 +95,7 @@ export default function BusinessTypeScreen() {
       });
     }
 
-    router.push('Availability');
+    router.push('/(onboarding)/(barber)/services-offered');
   };
 
   // renders mobile service fields if the selected type is mobile or both

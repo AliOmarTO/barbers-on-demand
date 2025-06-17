@@ -6,6 +6,7 @@ import {
   VerificationStatus,
   MobileServiceInfo,
   ShopInfo,
+  Service,
 } from '../models/Barber';
 
 // Create initial barber instance
@@ -139,6 +140,20 @@ export const barberAvailabilityAtom = atom(
   }
 );
 
+
+export const barberServicesAtom = atom(
+  (get) => get(barberAtom).services,
+  (get, set, services: Service[]) => {
+    const barber = get(barberAtom);
+    const updatedBarber = new Barber({
+      ...barber,
+      services,
+      updatedAt: new Date(),
+    });
+    set(barberAtom, updatedBarber);
+  }
+);
+
 export const barberPortfolioAtom = atom(
   (get) => get(barberAtom).profile.portfolioImages,
   (get, set, portfolioImages: string[]) => {
@@ -160,4 +175,4 @@ export const barberFullNameAtom = atom((get) => get(barberAtom).fullName);
 export const barberCanAcceptBookingsAtom = atom((get) => get(barberAtom).canAcceptBookings);
 export const barberIsFullyVerifiedAtom = atom((get) => get(barberAtom).isFullyVerified);
 export const barberIsMobileServiceAtom = atom((get) => get(barberAtom).isMobileService);
-export const barberHasStudioAtom = atom((get) => get(barberAtom).hasStudio);
+export const barberHasShopAtom = atom((get) => get(barberAtom).hasShop);

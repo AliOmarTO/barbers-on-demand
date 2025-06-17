@@ -65,7 +65,7 @@ export default function RootLayout() {
     } else if (user && !inAuthGroup) {
       console.log('Redirecting to home');
       //router.replace('/(auth)/(tabs)/home');
-      router.replace('/(onboarding)/common/welcome'); // Temporary redirect to barber profile for testing
+      router.replace('/(onboarding)/(barber)/services-offered'); // Temporary redirect to barber profile for testing
     } else if (!user && inAuthGroup) {
       console.log('Redirecting to login screen');
       router.replace('/');
