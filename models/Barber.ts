@@ -1,3 +1,6 @@
+import { BookingInterface } from '@/types';
+import { Booking } from './Booking';
+
 // Enums and Types
 export enum ServiceType {
   MOBILE_ONLY = 'mobile_only',
@@ -115,6 +118,9 @@ export class Barber {
   public createdAt: Date;
   public updatedAt: Date;
 
+  // bookings
+  public bookings: BookingInterface[];
+
   // Service Configuration
   public serviceType: ServiceType;
   public services: Service[];
@@ -163,6 +169,8 @@ export class Barber {
     this.dateOfBirth = data.dateOfBirth;
     this.createdAt = data.createdAt || new Date();
     this.updatedAt = data.updatedAt || new Date();
+
+    this.bookings = data.bookings || [];
 
     this.serviceType = data.serviceType || ServiceType.MOBILE_ONLY;
     this.services = data.services || [];

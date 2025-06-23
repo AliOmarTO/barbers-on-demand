@@ -9,6 +9,73 @@ import {
   Service,
   Availability,
 } from '../models/Barber';
+import { BookingInterface } from '@/types';
+
+const currentDate = new Date();
+const currentYear = currentDate.getFullYear();
+const currentMonth = currentDate.getMonth();
+const currentDay = currentDate.getDate();
+
+// mock data just to simulate bookings for the barber
+// This data can be replaced with actual API calls or database queries in a real application
+const mockBookings: BookingInterface[] = [
+  {
+    id: '1',
+    clientName: 'John Smith',
+    clientPhone: '(555) 123-4567',
+    serviceName: 'Haircut & Beard Trim',
+    startTime: new Date(currentYear, currentMonth, currentDay, 9, 0), // Current year/month, 17th day, 9:00 AM
+    endTime: new Date(currentYear, currentMonth, currentDay, 10, 0),
+    price: 45,
+    status: 'confirmed',
+    isFirstTime: false,
+  },
+  {
+    id: '2',
+    clientName: 'Mike Johnson',
+    clientPhone: '(555) 987-6543',
+    serviceName: 'Premium Haircut',
+    startTime: new Date(currentYear, currentMonth, currentDay + 1, 11, 30), // Current year/month, 17th day, 11:30 AM
+    endTime: new Date(currentYear, currentMonth, currentDay + 1, 12, 30),
+    price: 35,
+    status: 'confirmed',
+    isFirstTime: true,
+    notes: 'First time client - wants a modern fade',
+  },
+  {
+    id: '3',
+    clientName: 'David Wilson',
+    clientPhone: '(555) 456-7890',
+    serviceName: 'Beard Styling',
+    startTime: new Date(currentYear, currentMonth, currentDay, 14, 0), // Current year/month, 17th day, 2:00 PM
+    endTime: new Date(currentYear, currentMonth, currentDay, 14, 45),
+    price: 25,
+    status: 'pending',
+    isFirstTime: false,
+  },
+  {
+    id: '4',
+    clientName: 'Alex Brown',
+    clientPhone: '(555) 321-0987',
+    serviceName: 'Full Service Package',
+    startTime: new Date(currentYear, currentMonth, currentDay + 1, 10, 0), // Current year/month, 18th day, 10:00 AM
+    endTime: new Date(currentYear, currentMonth, currentDay + 1, 11, 30),
+    price: 65,
+    status: 'confirmed',
+    isFirstTime: false,
+  },
+  {
+    id: '5',
+    clientName: 'Chris Davis',
+    clientPhone: '(555) 654-3210',
+    serviceName: 'Haircut',
+    startTime: new Date(currentYear, currentMonth, currentDay + 2, 15, 30), // Current year/month, 19th day, 3:30 PM
+    endTime: new Date(currentYear, currentMonth, currentDay + 2, 16, 30),
+    price: 30,
+    status: 'confirmed',
+    isFirstTime: true,
+  },
+];
 
 // Create initial barber instance
 const createInitialBarber = (): Barber => {
@@ -19,6 +86,7 @@ const createInitialBarber = (): Barber => {
     firstName: '',
     lastName: '',
     profileImage: '',
+    bookings: mockBookings,
     serviceType: ServiceType.SHOP,
     currentStatus: AvailabilityStatus.AVAILABLE,
     verificationStatus: VerificationStatus.PENDING,

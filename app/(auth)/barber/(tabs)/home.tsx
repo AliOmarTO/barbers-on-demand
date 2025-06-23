@@ -11,10 +11,13 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useAtom } from 'jotai';
 import { barberAtom } from '@/store/createdBarberAtom';
+import { Booking } from '@/models/Booking';
+import { useRouter } from 'expo-router';
 
 const currentDate = new Date();
 const currentYear = currentDate.getFullYear();
 const currentMonth = currentDate.getMonth();
+const currentDay = currentDate.getDate();
 
 // Mock booking data - in real app this would come from your backend
 interface Booking {
@@ -30,64 +33,64 @@ interface Booking {
   notes?: string;
 }
 
-const mockBookings: Booking[] = [
-  {
-    id: '1',
-    clientName: 'John Smith',
-    clientPhone: '(555) 123-4567',
-    serviceName: 'Haircut & Beard Trim',
-    startTime: new Date(currentYear, currentMonth, 17, 9, 0), // Current year/month, 17th day, 9:00 AM
-    endTime: new Date(currentYear, currentMonth, 17, 10, 0),
-    price: 45,
-    status: 'confirmed',
-    isFirstTime: false,
-  },
-  {
-    id: '2',
-    clientName: 'Mike Johnson',
-    clientPhone: '(555) 987-6543',
-    serviceName: 'Premium Haircut',
-    startTime: new Date(currentYear, currentMonth, 17, 11, 30), // Current year/month, 17th day, 11:30 AM
-    endTime: new Date(currentYear, currentMonth, 17, 12, 30),
-    price: 35,
-    status: 'confirmed',
-    isFirstTime: true,
-    notes: 'First time client - wants a modern fade',
-  },
-  {
-    id: '3',
-    clientName: 'David Wilson',
-    clientPhone: '(555) 456-7890',
-    serviceName: 'Beard Styling',
-    startTime: new Date(currentYear, currentMonth, 17, 14, 0), // Current year/month, 17th day, 2:00 PM
-    endTime: new Date(currentYear, currentMonth, 17, 14, 45),
-    price: 25,
-    status: 'pending',
-    isFirstTime: false,
-  },
-  {
-    id: '4',
-    clientName: 'Alex Brown',
-    clientPhone: '(555) 321-0987',
-    serviceName: 'Full Service Package',
-    startTime: new Date(currentYear, currentMonth, 18, 10, 0), // Current year/month, 18th day, 10:00 AM
-    endTime: new Date(currentYear, currentMonth, 18, 11, 30),
-    price: 65,
-    status: 'confirmed',
-    isFirstTime: false,
-  },
-  {
-    id: '5',
-    clientName: 'Chris Davis',
-    clientPhone: '(555) 654-3210',
-    serviceName: 'Haircut',
-    startTime: new Date(currentYear, currentMonth, 19, 15, 30), // Current year/month, 19th day, 3:30 PM
-    endTime: new Date(currentYear, currentMonth, 19, 16, 30),
-    price: 30,
-    status: 'confirmed',
-    isFirstTime: true,
-  },
-];
+// const mockBookings: Booking[] = [
+//   {
+//     id: '1',
+//     clientName: 'John Smith',
+//     clientPhone: '(555) 123-4567',
+//     serviceName: 'Haircut & Beard Trim',
+//     startTime: new Date(currentYear, currentMonth, currentDay, 9, 0), // Current year/month, 17th day, 9:00 AM
+//     endTime: new Date(currentYear, currentMonth, currentDay, 10, 0),
+//     price: 45,
+//     status: 'confirmed',
+//     isFirstTime: false,
+//   },
+//   {
+//     id: '2',
+//     clientName: 'Mike Johnson',
+//     clientPhone: '(555) 987-6543',
+//     serviceName: 'Premium Haircut',
+//     startTime: new Date(currentYear, currentMonth, currentDay, 11, 30), // Current year/month, 17th day, 11:30 AM
+//     endTime: new Date(currentYear, currentMonth, currentDay, 12, 30),
+//     price: 35,
+//     status: 'confirmed',
+//     isFirstTime: true,
+//     notes: 'First time client - wants a modern fade',
+//   },
+//   {
+//     id: '3',
+//     clientName: 'David Wilson',
+//     clientPhone: '(555) 456-7890',
+//     serviceName: 'Beard Styling',
+//     startTime: new Date(currentYear, currentMonth, currentDay, 14, 0), // Current year/month, 17th day, 2:00 PM
+//     endTime: new Date(currentYear, currentMonth, currentDay, 14, 45),
+//     price: 25,
+//     status: 'pending',
+//     isFirstTime: false,
+//   },
+//   {
+//     id: '4',
+//     clientName: 'Alex Brown',
+//     clientPhone: '(555) 321-0987',
+//     serviceName: 'Full Service Package',
+//     startTime: new Date(currentYear, currentMonth, currentDay, 10, 0), // Current year/month, 18th day, 10:00 AM
+//     endTime: new Date(currentYear, currentMonth, currentDay, 11, 30),
+//     price: 65,
+//     status: 'confirmed',
+//     isFirstTime: false,
+//   },
+//   {
+//     id: '5',
+//     clientName: 'Chris Davis',
+//     clientPhone: '(555) 654-3210',
+//     serviceName: 'Haircut',
+//     startTime: new Date(currentYear, currentMonth, currentDay, 15, 30), // Current year/month, 19th day, 3:30 PM
+//     endTime: new Date(currentYear, currentMonth, currentDay, 16, 30),
+//     price: 30,
+//     status: 'confirmed',
+//     isFirstTime: true,
+//   },
+// ];
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const months = [
   'January',
@@ -108,9 +111,11 @@ export default function BarberHomeScreen() {
   const [barber] = useAtom(barberAtom);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [bookings] = useState<Booking[]>(mockBookings);
+  //const [bookings] = useState<Booking[]>(mockBookings);
   const [refreshing, setRefreshing] = useState(false);
   const [viewMode, setViewMode] = useState<'calendar' | 'agenda'>('calendar');
+
+  const router = useRouter();
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -143,7 +148,9 @@ export default function BarberHomeScreen() {
   };
 
   const getBookingsForDate = (date: Date) => {
-    return bookings.filter((booking) => booking.startTime.toDateString() === date.toDateString());
+    return barber.bookings.filter(
+      (booking) => booking.startTime.toDateString() === date.toDateString()
+    );
   };
 
   const getTodaysBookings = () => {
@@ -156,7 +163,7 @@ export default function BarberHomeScreen() {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    return bookings
+    return barber.bookings
       .filter((booking) => booking.startTime >= tomorrow)
       .sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
       .slice(0, 3);
@@ -201,19 +208,25 @@ export default function BarberHomeScreen() {
   };
 
   const handleBookingPress = (booking: Booking) => {
-    Alert.alert(
-      booking.clientName,
-      `Service: ${booking.serviceName}\nTime: ${formatTime(booking.startTime)} - ${formatTime(
-        booking.endTime
-      )}\nPrice: $${booking.price}\nStatus: ${
-        booking.status.charAt(0).toUpperCase() + booking.status.slice(1)
-      }${booking.notes ? `\n\nNotes: ${booking.notes}` : ''}`,
-      [
-        { text: 'Call Client', onPress: () => console.log('Call client') },
-        { text: 'View Details', onPress: () => console.log('View details') },
-        { text: 'Close', style: 'cancel' },
-      ]
-    );
+    // Alert.alert(
+    //   booking.clientName,
+    //   `Service: ${booking.serviceName}\nTime: ${formatTime(booking.startTime)} - ${formatTime(
+    //     booking.endTime
+    //   )}\nPrice: $${booking.price}\nStatus: ${
+    //     booking.status.charAt(0).toUpperCase() + booking.status.slice(1)
+    //   }${booking.notes ? `\n\nNotes: ${booking.notes}` : ''}`,
+    //   [
+    //     { text: 'Call Client', onPress: () => console.log('Call client') },
+    //     { text: 'View Details', onPress: () => console.log('View details') },
+    //     { text: 'Close', style: 'cancel' },
+    //   ]
+    // );
+
+    // go to booking details screen
+    router.push({
+      pathname: '/barber/booking-details/details',
+      params: { bookingId: booking.id },
+    });
   };
 
   const navigateMonth = (direction: 'prev' | 'next') => {
@@ -518,7 +531,7 @@ export default function BarberHomeScreen() {
       </ScrollView>
 
       {/* Quick Actions FAB */}
-      <View className="absolute bottom-12 right-12">
+      {/* <View className="absolute bottom-12 right-12">
         <TouchableOpacity
           className="w-16 h-16 bg-red-600 rounded-full items-center justify-center shadow-2xl"
           onPress={() => {
@@ -532,7 +545,7 @@ export default function BarberHomeScreen() {
         >
           <Ionicons name="add" size={32} color="#ffffff" />
         </TouchableOpacity>
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 }

@@ -57,4 +57,17 @@ export interface BarberOnboardingData {
   photos: string[];
 }
 
+export interface BookingInterface {
+  id: string;
+  clientName: string;
+  clientPhone: string;
+  serviceName: string;
+  startTime: Date;
+  endTime: Date;
+  price: number;
+  status: 'confirmed' | 'pending' | 'completed' | 'cancelled';
+  isFirstTime: boolean;
+  notes?: string;
+}
+
 export interface Client extends User {}

@@ -26,6 +26,14 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <FontAwesome size={30} name="user" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="booking-details"
+        options={{
+          href: null, // Disable navigation to this tab
+          tabBarShowLabel: false,
+          tabBarStyle: { display: 'none' }, // Hide the tab bar for this screen
+        }}
+      />
     </Tabs>
   );
 }
