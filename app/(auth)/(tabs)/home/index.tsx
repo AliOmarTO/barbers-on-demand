@@ -43,7 +43,7 @@ const recommendedShops: BarberShop[] = [
     location: '1314 King Street West',
     image:
       'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
-    tags: ['Hair Salon'],
+    tags: ['Barber Shop'],
   },
 ];
 
@@ -66,7 +66,7 @@ const newShops: BarberShop[] = [
     location: 'Yorkville, Toronto',
     image:
       'https://images.unsplash.com/photo-1622288432450-277d0fef5ed6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
-    tags: ['Beauty Salon'],
+    tags: ['Barber Shop'],
   },
 ];
 
@@ -79,7 +79,7 @@ const mobileBarbers: BarberShop[] = [
     location: 'Liberty Village, Toronto',
     image:
       'https://plus.unsplash.com/premium_photo-1689533448099-2dc408030f0f?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    tags: ['Barber Shop'],
+    tags: ['Mobile Barber'],
   },
   {
     id: '6',
@@ -89,7 +89,7 @@ const mobileBarbers: BarberShop[] = [
     location: 'Queen West, Toronto',
     image:
       'https://plus.unsplash.com/premium_photo-1689530775582-83b8abdb5020?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    tags: ['Barber Shop', 'Lounge'],
+    tags: ['Mobile Barber'],
   },
 ];
 
@@ -150,7 +150,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.section}>
-          <SectionHeader title="New to Barbers On Demand" />
+          <SectionHeader title="New to BoD" />
           <ShopList shops={newShops} />
         </View>
 

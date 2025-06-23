@@ -115,7 +115,7 @@ export default function BusinessTypeScreen() {
           <Text className="text-sm font-medium text-gray-700 mb-2">
             Service Radius <Text className="text-red-600">*</Text>
           </Text>
-          <Text className="text-xs text-gray-500 mb-2">How far will you travel? (in miles)</Text>
+          <Text className="text-xs text-gray-500 mb-2">How far will you travel? (in km)</Text>
           <TextInput
             className="border-2 border-gray-200 rounded-lg px-4 py-3 text-base bg-white"
             value={serviceRadius}

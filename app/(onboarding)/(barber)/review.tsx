@@ -31,19 +31,7 @@ export default function ReviewScreen() {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      Alert.alert(
-        'Success!',
-        'Your barber profile has been created successfully. You can now start accepting bookings!',
-        [
-          {
-            text: 'Get Started',
-            onPress: () => {
-              // Navigate to main app or barber dashboard
-              router.push('/(auth)/(tabs)/home');
-            },
-          },
-        ]
-      );
+      router.push('/(auth)/barber/(tabs)/home');
     } catch (error) {
       Alert.alert('Error', 'Something went wrong. Please try again.');
     } finally {
@@ -446,14 +434,6 @@ export default function ReviewScreen() {
                       <Text className="font-medium text-gray-700">{item.hours}</Text>
                     </View>
                   ))}
-                  {barber.bufferTimeBetweenAppointments > 0 && (
-                    <View className="mt-3 p-3 bg-blue-50 rounded-xl">
-                      <Text className="text-sm text-blue-800">
-                        Buffer time between appointments: {barber.bufferTimeBetweenAppointments}{' '}
-                        minutes
-                      </Text>
-                    </View>
-                  )}
                 </View>
               ) : (
                 <Text className="text-gray-500 italic text-center py-4">No availability set</Text>

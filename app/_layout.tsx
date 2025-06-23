@@ -30,7 +30,8 @@ export default function RootLayout() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        console.log('User signed in:', firebaseUser);
+        console.log('User signed in pew peww:', firebaseUser);
+        console.log('User ID:', registeredUsers);
         setUser(firebaseUser);
       } else {
         console.log('User signed out');
@@ -60,12 +61,18 @@ export default function RootLayout() {
     if (wasJustSignedUp) {
       // If the user just signed up, redirect to onboarding flow
       console.log('Redirecting to onboarding flow');
-      router.push('/(onboarding)/welcome');
+      router.push('/(onboarding)/common/welcome');
       setWasJustSignedUp(false); // Reset the flag
     } else if (user && !inAuthGroup) {
       console.log('Redirecting to home');
       //router.replace('/(auth)/(tabs)/home');
-      router.replace('/(onboarding)/(barber)/review'); // Temporary redirect to barber profile for testing
+      if (jotaiUser?.type == 'barber') {
+        console.log('Redirecting to barber profile');
+        router.replace('/(auth)/barber/(tabs)/home');
+      } else {
+        console.log('Redirecting to user profile');
+        router.replace('/(auth)/(tabs)/home');
+      }
     } else if (!user && inAuthGroup) {
       console.log('Redirecting to login screen');
       router.replace('/');

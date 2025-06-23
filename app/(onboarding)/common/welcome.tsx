@@ -27,7 +27,7 @@ export default function Welcome() {
         router.push('/(onboarding)/(client)/client-profile');
       } else {
         // For barber, navigate to barber profile setup
-        router.push('/(onboarding)/(barber)/personal-info');
+        router.push('/(onboarding)/(barber)/start-screen');
       }
     }
   };
@@ -54,7 +54,7 @@ export default function Welcome() {
 
         <View className="gap-4 mb-12">
           <TouchableOpacity
-            className={`bg-white p-6 rounded-2xl items-center border-2 shadow ${
+            className={` p-6 rounded-2xl  items-center border-2  ${
               selectedType === 'client' ? 'bg-brand border-brand' : 'border-slate-200'
             }`}
             onPress={() => setSelectedType('client')}
@@ -83,7 +83,7 @@ export default function Welcome() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            className={`bg-white p-6 rounded-2xl items-center border-2 shadow ${
+            className={` p-6 rounded-2xl items-center border-2  ${
               selectedType === 'barber' ? 'bg-brand border-brand' : 'border-slate-200'
             }`}
             onPress={() => setSelectedType('barber')}
@@ -92,7 +92,7 @@ export default function Welcome() {
               <Ionicons
                 name="cut"
                 size={40}
-                color={selectedType === 'barber' ? '#fff000' : '#cc001e'}
+                color={selectedType === 'barber' ? '#ffffff' : '#cc001e'}
               />
             </View>
             <Text

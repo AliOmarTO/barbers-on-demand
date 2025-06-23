@@ -20,7 +20,7 @@ const createInitialBarber = (): Barber => {
     lastName: '',
     profileImage: '',
     serviceType: ServiceType.SHOP,
-    currentStatus: AvailabilityStatus.OFFLINE,
+    currentStatus: AvailabilityStatus.AVAILABLE,
     verificationStatus: VerificationStatus.PENDING,
     isOnboarded: false,
     profile: {
