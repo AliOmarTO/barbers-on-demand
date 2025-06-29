@@ -127,7 +127,7 @@ export default function BarberProfileScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <View style={styles.headerContent}>
           <TouchableOpacity style={styles.backButton}>
             <Ionicons name="arrow-back" size={24} color="#6b7280" />
@@ -139,7 +139,7 @@ export default function BarberProfileScreen() {
             <Ionicons name="create" size={24} color="#dc2626" />
           </TouchableOpacity>
         </View>
-      </View>
+      </View> */}
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
@@ -404,7 +404,7 @@ export default function BarberProfileScreen() {
               <View style={styles.businessInfoItem}>
                 <Text style={styles.businessInfoLabel}>Member Since</Text>
                 <Text style={styles.businessInfoValue}>
-                  {barber.createdAt.toLocaleDateString()}
+                  {barber?.createdAt.toLocaleDateString()}
                 </Text>
               </View>
 

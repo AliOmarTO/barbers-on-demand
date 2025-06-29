@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import {
   View,
   Text,
@@ -148,7 +148,7 @@ export default function BarberHomeScreen() {
   };
 
   const getBookingsForDate = (date: Date) => {
-    return barber.bookings.filter(
+    return barber?.bookings?.filter(
       (booking) => booking.startTime.toDateString() === date.toDateString()
     );
   };
@@ -383,60 +383,57 @@ export default function BarberHomeScreen() {
   const selectedDateBookings = getBookingsForDate(selectedDate);
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="px-6 pt-4 pb-2">
-        <View className="flex-row items-center justify-between mb-4">
-          <View>
-            <Text className="text-2xl font-bold text-gray-900">Welcome back,</Text>
-            <Text className="text-2xl font-bold text-red-600">{barber.firstName}</Text>
+    <Suspense fallback={<Text>Loading...</Text>}>
+      <SafeAreaView className="flex-1 bg-gray-50">
+        {/* Header */}
+        <View className="px-6 pt-4 pb-2">
+          <View className="flex-row items-center justify-between mb-4">
+            <View>
+              <Text className="text-2xl font-bold text-gray-900">Welcome back,</Text>
+              <Text className="text-2xl font-bold text-red-600">{barber.firstName}</Text>
+            </View>
+
+            <View className="flex-row items-center ">
+              <TouchableOpacity className="w-12 h-12 mx-3 bg-white rounded-full items-center justify-center border border-gray-200 shadow-sm">
+                <Ionicons name="notifications" size={24} color="#6b7280" />
+                <View className="absolute -top-1 -right-1 w-5 h-5 bg-red-600 rounded-full items-center justify-center">
+                  <Text className="text-xs font-bold text-white">3</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
           </View>
 
-          <View className="flex-row items-center ">
-            <TouchableOpacity className="w-12 h-12 mx-3 bg-white rounded-full items-center justify-center border border-gray-200 shadow-sm">
-              <Ionicons name="notifications" size={24} color="#6b7280" />
-              <View className="absolute -top-1 -right-1 w-5 h-5 bg-red-600 rounded-full items-center justify-center">
-                <Text className="text-xs font-bold text-white">3</Text>
+          {/* Quick Stats */}
+          <View className="flex-row mb-4">
+            <View className="flex-1 mr-4 bg-white rounded-2xl p-4 border border-gray-200 shadow-sm">
+              <View className="flex-row items-center justify-between">
+                <View>
+                  <Text className="text-2xl font-bold text-gray-900">{todaysBookings.length}</Text>
+                  <Text className="text-sm text-gray-600">Today&apos;s Bookings</Text>
+                </View>
+                <View className="w-12 h-12 bg-red-100 rounded-full items-center justify-center">
+                  <Ionicons name="calendar" size={24} color="#dc2626" />
+                </View>
               </View>
-            </TouchableOpacity>
+            </View>
 
-            <TouchableOpacity className="w-12 h-12 bg-white rounded-full items-center justify-center border border-gray-200 shadow-sm">
-              <Ionicons name="person" size={24} color="#6b7280" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Quick Stats */}
-        <View className="flex-row mb-4">
-          <View className="flex-1 mr-4 bg-white rounded-2xl p-4 border border-gray-200 shadow-sm">
-            <View className="flex-row items-center justify-between">
-              <View>
-                <Text className="text-2xl font-bold text-gray-900">{todaysBookings.length}</Text>
-                <Text className="text-sm text-gray-600">Today&apos;s Bookings</Text>
-              </View>
-              <View className="w-12 h-12 bg-red-100 rounded-full items-center justify-center">
-                <Ionicons name="calendar" size={24} color="#dc2626" />
+            <View className="flex-1 bg-white rounded-2xl p-4 border border-gray-200 shadow-sm">
+              <View className="flex-row items-center justify-between">
+                <View>
+                  <Text className="text-2xl font-bold text-gray-900">
+                    ${todaysBookings.reduce((sum, booking) => sum + booking.price, 0)}
+                  </Text>
+                  <Text className="text-sm text-gray-600">Today's Revenue</Text>
+                </View>
+                <View className="w-12 h-12 bg-green-100 rounded-full items-center justify-center">
+                  <Ionicons name="cash" size={24} color="#16a34a" />
+                </View>
               </View>
             </View>
           </View>
 
-          <View className="flex-1 bg-white rounded-2xl p-4 border border-gray-200 shadow-sm">
-            <View className="flex-row items-center justify-between">
-              <View>
-                <Text className="text-2xl font-bold text-gray-900">
-                  ${todaysBookings.reduce((sum, booking) => sum + booking.price, 0)}
-                </Text>
-                <Text className="text-sm text-gray-600">Today's Revenue</Text>
-              </View>
-              <View className="w-12 h-12 bg-green-100 rounded-full items-center justify-center">
-                <Ionicons name="cash" size={24} color="#16a34a" />
-              </View>
-            </View>
-          </View>
-        </View>
-
-        {/* View Toggle */}
-        {/* <View className="flex-row bg-gray-200 rounded-2xl p-1">
+          {/* View Toggle */}
+          {/* <View className="flex-row bg-gray-200 rounded-2xl p-1">
           <TouchableOpacity
             className={`flex-1 py-3 rounded-xl items-center ${
               viewMode === 'calendar' ? 'bg-white shadow-sm' : ''
@@ -467,71 +464,73 @@ export default function BarberHomeScreen() {
             </Text>
           </TouchableOpacity>
         </View> */}
-      </View>
+        </View>
 
-      <ScrollView
-        className="flex-1 px-6"
-        showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      >
-        {viewMode === 'calendar' ? (
-          <View className="pb-8">
-            {renderCalendarView()}
+        <ScrollView
+          className="flex-1 px-6"
+          showsVerticalScrollIndicator={false}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        >
+          {viewMode === 'calendar' ? (
+            <View className="pb-8">
+              {renderCalendarView()}
 
-            {/* Selected Date Bookings */}
-            {selectedDateBookings.length > 0 && (
-              <View className="mt-6">
-                <Text className="text-xl font-bold text-gray-900 mb-4">
-                  {selectedDate.toDateString() === new Date().toDateString()
-                    ? "Today's Appointments"
-                    : `Appointments for ${selectedDate.toLocaleDateString()}`}
-                </Text>
-                {selectedDateBookings.map(renderBookingCard)}
-              </View>
-            )}
-          </View>
-        ) : (
-          <View className="pb-8">
-            {/* Today's Bookings */}
-            {todaysBookings.length > 0 && (
-              <View className="mb-6">
-                <Text className="text-xl font-bold text-gray-900 mb-4">Today's Appointments</Text>
-                {todaysBookings.map(renderBookingCard)}
-              </View>
-            )}
-
-            {/* Upcoming Bookings */}
-            {upcomingBookings.length > 0 && (
-              <View className="mb-6">
-                <Text className="text-xl font-bold text-gray-900 mb-4">Upcoming Appointments</Text>
-                {upcomingBookings.map(renderBookingCard)}
-              </View>
-            )}
-
-            {/* Empty State */}
-            {todaysBookings.length === 0 && upcomingBookings.length === 0 && (
-              <View className="items-center py-16">
-                <View className="w-20 h-20 bg-gray-200 rounded-full items-center justify-center mb-4">
-                  <Ionicons name="calendar-outline" size={40} color="#9ca3af" />
+              {/* Selected Date Bookings */}
+              {selectedDateBookings.length > 0 && (
+                <View className="mt-6">
+                  <Text className="text-xl font-bold text-gray-900 mb-4">
+                    {selectedDate.toDateString() === new Date().toDateString()
+                      ? "Today's Appointments"
+                      : `Appointments for ${selectedDate.toLocaleDateString()}`}
+                  </Text>
+                  {selectedDateBookings.map(renderBookingCard)}
                 </View>
-                <Text className="text-xl font-semibold text-gray-900 mb-2">
-                  No appointments yet
-                </Text>
-                <Text className="text-sm text-gray-600 text-center leading-5 mb-6 max-w-xs">
-                  Your bookings will appear here. Share your profile to start getting clients!
-                </Text>
-                <TouchableOpacity className="bg-red-600 px-6 py-3 rounded-xl flex-row items-center shadow-lg">
-                  <Ionicons name="share" size={20} color="#ffffff" />
-                  <Text className="text-white font-semibold ml-2">Share Profile</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-        )}
-      </ScrollView>
+              )}
+            </View>
+          ) : (
+            <View className="pb-8">
+              {/* Today's Bookings */}
+              {todaysBookings.length > 0 && (
+                <View className="mb-6">
+                  <Text className="text-xl font-bold text-gray-900 mb-4">Today's Appointments</Text>
+                  {todaysBookings.map(renderBookingCard)}
+                </View>
+              )}
 
-      {/* Quick Actions FAB */}
-      {/* <View className="absolute bottom-12 right-12">
+              {/* Upcoming Bookings */}
+              {upcomingBookings.length > 0 && (
+                <View className="mb-6">
+                  <Text className="text-xl font-bold text-gray-900 mb-4">
+                    Upcoming Appointments
+                  </Text>
+                  {upcomingBookings.map(renderBookingCard)}
+                </View>
+              )}
+
+              {/* Empty State */}
+              {todaysBookings.length === 0 && upcomingBookings.length === 0 && (
+                <View className="items-center py-16">
+                  <View className="w-20 h-20 bg-gray-200 rounded-full items-center justify-center mb-4">
+                    <Ionicons name="calendar-outline" size={40} color="#9ca3af" />
+                  </View>
+                  <Text className="text-xl font-semibold text-gray-900 mb-2">
+                    No appointments yet
+                  </Text>
+                  <Text className="text-sm text-gray-600 text-center leading-5 mb-6 max-w-xs">
+                    Your bookings will appear here. Share your profile to start getting clients!
+                  </Text>
+                  <TouchableOpacity className="bg-red-600 px-6 py-3 rounded-xl flex-row items-center shadow-lg">
+                    <Ionicons name="share" size={20} color="#ffffff" />
+                    <Text className="text-white font-semibold ml-2">Share Profile</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          )}
+        </ScrollView>
+
+        {/* Quick Actions FAB */}
+        {/* <View className="absolute bottom-12 right-12">
         <TouchableOpacity
           className="w-16 h-16 bg-red-600 rounded-full items-center justify-center shadow-2xl"
           onPress={() => {
@@ -546,6 +545,7 @@ export default function BarberHomeScreen() {
           <Ionicons name="add" size={32} color="#ffffff" />
         </TouchableOpacity>
       </View> */}
-    </SafeAreaView>
+      </SafeAreaView>
+    </Suspense>
   );
 }

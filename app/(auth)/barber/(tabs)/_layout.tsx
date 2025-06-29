@@ -19,6 +19,21 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <FontAwesome size={30} name="home" color={color} />,
         }}
       />
+
+      <Tabs.Screen
+        name="management"
+        options={{
+          title: 'Management',
+          tabBarIcon: ({ color }) => <FontAwesome size={30} name="book" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="analytics"
+        options={{
+          title: 'analytics',
+          tabBarIcon: ({ color }) => <FontAwesome size={30} name="bar-chart" color={color} />,
+        }}
+      />
       <Tabs.Screen
         name="profile"
         options={{
